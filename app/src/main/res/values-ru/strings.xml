@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">Yandex Test</string>
     <string name="add_note">Добавить заметку</string>
+    <string name="enter_message">Введите текст</string>
+    <string name="enter_title">Введите название</string>
 </resources>

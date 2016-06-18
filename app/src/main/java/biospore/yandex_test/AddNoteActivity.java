@@ -20,7 +20,6 @@ public class AddNoteActivity extends AppCompatActivity {
         EditText text =  (EditText) findViewById(R.id.text_field);
         /*Working with sql very slow*/
         if (text != null && title != null) {
-            if (title.getText().toString() != "" && text.getText().toString() != "")
                 /*field not unique - don't need additional checking*/
                 db.addNote(new Note(
                         title.getText().toString(),

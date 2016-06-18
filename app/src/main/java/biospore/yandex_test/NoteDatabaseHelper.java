@@ -55,7 +55,7 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    Note getNote(int id)
+    Note getNoteById(int id)
     {
         SQLiteDatabase db = this.getWritableDatabase();
         @SuppressLint("Recycle") Cursor cursor = db.query(
@@ -72,9 +72,8 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
                 null
         );
         if (cursor != null)
+        {
             cursor.moveToFirst();
-
-        if (cursor != null) {
             return new Note (
                     Integer.parseInt(cursor.getString(0)),
                     cursor.getString(1),

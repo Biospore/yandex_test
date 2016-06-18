@@ -3,4 +3,10 @@
     <string name="add_note">Add new note</string>
     <string name="enter_title">Enter title</string>
     <string name="enter_message">Enter message</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="done">Done</string>
+    <string name="empty_title">&lt;no subject&gt;</string>
+    <string name="empty_text"><![CDATA[<no text>]]></string>
 </resources>

@@ -4,4 +4,10 @@
     <string name="add_note">Добавить заметку</string>
     <string name="enter_message">Введите текст</string>
     <string name="enter_title">Введите название</string>
+    <string name="edit">Изменить</string>
+    <string name="delete">Удалить</string>
+    <string name="save">Сохранить</string>
+    <string name="done">Добавить</string>
+    <string name="empty_title">&lt;без темы&gt;</string>
+    <string name="empty_text"><![CDATA[<нет текста>]]></string>
 </resources>

@@ -3,15 +3,10 @@ package biospore.yandex_test;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     public static ArrayList<String> titles = new ArrayList<String>();
     NoteDatabaseHelper db;
+
+    public static final String NOTE_ID = "biospore.yandex_test.NOTE_ID";
 
 
     @Override
@@ -41,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 android.R.layout.simple_list_item_1,
                 titles
                 );
+
         listView.setAdapter(adapter);
     }
 
@@ -54,8 +52,20 @@ public class MainActivity extends AppCompatActivity {
 
         for (Note n : notes)
         {
-            adapter.add(n.getTitle() + String.valueOf(n.getId()));
+            if (n.getTitle().isEmpty())
+                n.setTitle(getString(R.string.empty_title));
+            adapter.add(n);
         }
+        listView.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Intent intent = new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
+                        Note n = (Note) parent.getItemAtPosition(position);
+                        intent.putExtra(NOTE_ID, String.valueOf(n.getId()));
+                        startActivity(intent);
+                    }
+                });
     }
 
     public void addNote(View view)

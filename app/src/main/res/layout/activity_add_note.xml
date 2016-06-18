@@ -23,12 +23,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/enter_title"
+                android:id="@+id/title_field"
                 android:inputType="textShortMessage" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/enter_message"
+                android:id="@+id/text_field"
                 android:inputType="textMultiLine" />
         </LinearLayout>
         <Button

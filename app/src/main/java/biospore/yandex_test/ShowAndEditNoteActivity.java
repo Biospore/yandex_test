@@ -45,6 +45,7 @@ public class ShowAndEditNoteActivity extends AppCompatActivity {
 
     public void deleteNote(View view) {
         db.deleteNote(note);
+        db.close();
         finish();
     }
 
@@ -59,9 +60,12 @@ public class ShowAndEditNoteActivity extends AppCompatActivity {
                 note.setTitle(titleField.getText().toString());
                 note.setText(textField.getText().toString());
                 db.updateNote(note);
+
                 finish();
             }
         };
         edit.setOnClickListener(listen);
     }
 }
+
+

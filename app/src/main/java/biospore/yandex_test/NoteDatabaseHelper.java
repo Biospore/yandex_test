@@ -83,9 +83,9 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    List<Note> getAllNotes()
+    ArrayList<Note> getAllNotes()
     {
-        List<Note> notes = new ArrayList<Note>();
+        ArrayList<Note> notes = new ArrayList<Note>();
         String selectQuery = "select * from " + TABLE_NAME;
         SQLiteDatabase db = this.getWritableDatabase();
         @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);

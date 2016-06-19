@@ -1,9 +1,14 @@
 package biospore.yandex_test;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created by biospore on 6/17/16.
  */
-public class Note {
+public class Note implements Parcelable{
     
     private int id;
     private String title;
@@ -22,6 +27,13 @@ public class Note {
     {
         this.title = title;
         this.text = text;
+    }
+
+    private Note(Parcel in)
+    {
+        id = in.readInt();
+        title = in.readString();
+        text = in.readString();
     }
 
     public int getId() {
@@ -52,4 +64,29 @@ public class Note {
     public String toString() {
         return title;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeString(text);
+    }
+
+    public static final Parcelable.Creator<Note> CREATOR = new Parcelable.Creator<Note>()
+    {
+        @Override
+        public Note createFromParcel(Parcel source) {
+            return new Note(source);
+        }
+
+        @Override
+        public Note[] newArray(int size) {
+            return new Note[0];
+        }
+    };
 }

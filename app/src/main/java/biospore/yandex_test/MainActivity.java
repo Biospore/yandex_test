@@ -1,20 +1,23 @@
 package biospore.yandex_test;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
-    public static ArrayList<String> titles = new ArrayList<String>();
+    private static String NOTES_BUNDLE_VALUE = "notes";
+//    private static String NOTES_BUNDLE_COUNT = "notes_count";
+    private static ArrayList<String> titles = new ArrayList<String>();
     NoteDatabaseHelper db;
 
     public static final String NOTE_ID = "biospore.yandex_test.NOTE_ID";
@@ -23,37 +26,63 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         db = new NoteDatabaseHelper(this);
         listView = (ListView) findViewById(R.id.list_view);
         createAdapter();
-        refreshContent();
+
+        if (savedInstanceState != null) {
+
+            NoteParcelStorage storage = (NoteParcelStorage) savedInstanceState.get(NOTES_BUNDLE_VALUE);
+            if (storage != null) {
+                fillArrayAdapter(storage.getNotes());
+            }
+        }
+        else
+        {
+            ArrayList<Note> notes = db.getAllNotes();
+            fillArrayAdapter(notes);
+        }
     }
 
-    private void createAdapter()
-    {
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+    }
+
+    private void createAdapter() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
                 titles
-                );
+        );
 
         listView.setAdapter(adapter);
     }
 
-    private void refreshContent()
+
+    private ArrayList<Note> getNotesFromAdapter(ArrayAdapter adapter)
     {
-        titles.clear();
-        /*Просто надеемся на то, что никто не поменяет код*/
-        /*Можно впихнуть проверку на тип*/
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
-        ((ArrayAdapter)listView.getAdapter()).notifyDataSetChanged();
-
-        List<Note> notes = db.getAllNotes();
-
-        for (Note n : notes)
+        ArrayList<Note> notes = new ArrayList<>();
+        int count = adapter.getCount();
+        for (int i = 0; i < count; i++)
         {
+            notes.add((Note) adapter.getItem(i));
+        }
+        return notes;
+    }
+
+
+    private void fillArrayAdapter(ArrayList<Note> notes) {
+        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+
+        adapter.clear();
+        titles.clear();
+        ((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
+        for (Note n : notes) {
             if (n.getTitle().isEmpty())
                 n.setTitle(getString(R.string.empty_title));
             /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
@@ -71,15 +100,34 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    public void addNote(View view)
-    {
+    public void addNote(View view) {
         Intent intent = new Intent(this, AddNoteActivity.class);
         startActivity(intent);
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
-        refreshContent();
+        
+//        refreshContent();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+        ArrayList<Note> notes = new ArrayList<Note>();
+        int count = adapter.getCount();
+//        outState.putInt(NOTES_BUNDLE_COUNT, count);
+
+        for (int i = 0; i < count; i++)
+        {
+            notes.add((Note) adapter.getItem(i));
+        }
+        NoteParcelStorage storage = new NoteParcelStorage(notes);
+
+        outState.putParcelable(NOTES_BUNDLE_VALUE, storage);
+        super.onSaveInstanceState(outState);
     }
 }

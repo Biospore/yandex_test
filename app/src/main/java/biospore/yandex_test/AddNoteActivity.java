@@ -23,15 +23,17 @@ public class AddNoteActivity extends AppCompatActivity {
         /*If text or title is null - just throw exception*/
         if (text != null && title != null) {
                 /*field not unique - don't need additional checking*/
-                db.addNote(new Note(
-                        title.getText().toString(),
-                        text.getText().toString()
-                ));
+            Note new_note = new Note(
+                    title.getText().toString(),
+                    text.getText().toString());
+                db.addNote(new_note);
+
             //else {/*Warning that title is empty or text is empty*/}
             /*              ^             */
             /*Problem with /|\ solved - just add empty value and show placeholder on screen*/
             /*              |           */
         } else throw (new RemoteViews.ActionException("Null title or text"));
+        db.close();
         finish();
     }
 }

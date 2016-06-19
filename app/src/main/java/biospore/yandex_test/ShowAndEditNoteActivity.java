@@ -24,8 +24,6 @@ public class ShowAndEditNoteActivity extends AppCompatActivity {
         int note_id = Integer.parseInt(intent.getStringExtra(MainActivity.NOTE_ID));
 
         db = new NoteDatabaseHelper(this);
-        Log.d("MDG", intent.getStringExtra(MainActivity.NOTE_ID));
-        Log.d("INT", String.valueOf(note_id));
         note = db.getNoteById(note_id);
 
         titleField = (EditText) findViewById(R.id.title_field);
@@ -40,7 +38,6 @@ public class ShowAndEditNoteActivity extends AppCompatActivity {
             textField.setHint(R.string.empty_text);
         else
             textField.setText(note.getText());
-//        textField.setText(note.getText());
 
         titleField.setEnabled(false);
         textField.setEnabled(false);

@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RemoteViews;
 
 public class AddNoteActivity extends AppCompatActivity {
 
@@ -19,6 +20,7 @@ public class AddNoteActivity extends AppCompatActivity {
         EditText title = (EditText) findViewById(R.id.title_field);
         EditText text =  (EditText) findViewById(R.id.text_field);
         /*Working with sql very slow*/
+        /*If text or title is null - just throw exception*/
         if (text != null && title != null) {
                 /*field not unique - don't need additional checking*/
                 db.addNote(new Note(
@@ -26,7 +28,10 @@ public class AddNoteActivity extends AppCompatActivity {
                         text.getText().toString()
                 ));
             //else {/*Warning that title is empty or text is empty*/}
-        }
+            /*              ^             */
+            /*Problem with /|\ solved - just add empty value and show placeholder on screen*/
+            /*              |           */
+        } else throw (new RemoteViews.ActionException("Null title or text"));
         finish();
     }
 }

@@ -64,7 +64,7 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
                         KEY_ID,
                         KEY_TITLE,
                         KEY_TEXT},
-                KEY_ID + "=?",
+                KEY_ID + " =? ",
                 new String[]{String.valueOf(id)},
                 null,
                 null,

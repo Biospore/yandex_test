@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private void refreshContent()
     {
         titles.clear();
+        /*Просто надеемся на то, что никто не поменяет код*/
+        /*Можно впихнуть проверку на тип*/
         ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
         ((ArrayAdapter)listView.getAdapter()).notifyDataSetChanged();
 
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         {
             if (n.getTitle().isEmpty())
                 n.setTitle(getString(R.string.empty_title));
+            /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
             adapter.add(n);
         }
         listView.setOnItemClickListener(

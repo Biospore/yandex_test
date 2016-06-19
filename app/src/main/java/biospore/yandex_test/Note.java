@@ -1,11 +1,5 @@
 package biospore.yandex_test;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.res.Resources;
-import android.util.Log;
-import android.view.ContextThemeWrapper;
-
 /**
  * Created by biospore on 6/17/16.
  */

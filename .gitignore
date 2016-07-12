@@ -40,3 +40,10 @@ captures/
 # Keystore files
 *.jks
 
+
+
+# temporary
+
+app/src/main/java/biospore/yandex_test/ArrayListOfNotes.java
+app/src/main/java/biospore/yandex_test/NoteParcelStorage.java
+

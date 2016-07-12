@@ -2,8 +2,6 @@ package biospore.yandex_test;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -75,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
         return notes;
     }
 
+    private void addNoteToAdapter(Note note)
+    {
+        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+        if (note.getTitle().isEmpty())
+            note.setTitle(getString(R.string.empty_title));
+            /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
+        adapter.add(note);
+    }
 
     private void fillArrayAdapter(ArrayList<Note> notes) {
         ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
@@ -102,16 +108,36 @@ public class MainActivity extends AppCompatActivity {
 
     public void addNote(View view) {
         Intent intent = new Intent(this, AddNoteActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, AddNoteActivity.ADD_NOTE_ACTIVITY_OK);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode){
+            case AddNoteActivity.ADD_NOTE_ACTIVITY_OK:
+                Note new_note = data.getExtras().getParcelable(AddNoteActivity.ADD_NOTE_ACTIVITY_NEW_NOTE);
+                addNoteToAdapter(new_note);
+                break;
 
+        }
+    }
+
+    //    @Override
+//    protected void onNewIntent(Intent intent) {
+//        super.onNewIntent(intent);
+//        setIntent(intent);
+//    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        
-//        refreshContent();
+//        Intent intent = getIntent();
+//        if (intent.getExtras() != null )
+//        {
+//            // do smthng
+//        }
+////        refreshContent();
     }
 
     @Override

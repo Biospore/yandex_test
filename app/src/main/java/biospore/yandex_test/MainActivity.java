@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,11 +15,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
     private static String NOTES_BUNDLE_VALUE = "notes";
-//    private static String NOTES_BUNDLE_COUNT = "notes_count";
     private static ArrayList<String> titles = new ArrayList<String>();
     NoteDatabaseHelper db;
 
     public static final String NOTE_ID = "biospore.yandex_test.NOTE_ID";
+    public static final String NOTE_POSITION = "note_postion";
 
 
     @Override
@@ -26,15 +27,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        Log.i("Bundle Resume", "oncreate");
 
         db = new NoteDatabaseHelper(this);
         listView = (ListView) findViewById(R.id.list_view);
+
         createAdapter();
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null)
+        {
+            Log.i("Debug Bundle Resume", "instance is not null");
+
 
             NoteParcelStorage storage = (NoteParcelStorage) savedInstanceState.get(NOTES_BUNDLE_VALUE);
             if (storage != null) {
+                Log.i("Debug Bundle Resume", "storage is not null");
+
                 fillArrayAdapter(storage.getNotes());
             }
         }
@@ -61,18 +69,6 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
     }
 
-
-    private ArrayList<Note> getNotesFromAdapter(ArrayAdapter adapter)
-    {
-        ArrayList<Note> notes = new ArrayList<>();
-        int count = adapter.getCount();
-        for (int i = 0; i < count; i++)
-        {
-            notes.add((Note) adapter.getItem(i));
-        }
-        return notes;
-    }
-
     private void addNoteToAdapter(Note note)
     {
         ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
@@ -80,6 +76,19 @@ public class MainActivity extends AppCompatActivity {
             note.setTitle(getString(R.string.empty_title));
             /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
         adapter.add(note);
+    }
+
+    private void deleteNoteFromAdapter(int position)
+    {
+        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+        adapter.remove(adapter.getItem(position));
+    }
+
+    private void updateNoteOnAdapter(int position, Note note)
+    {
+        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+        adapter.remove(adapter.getItem(position));
+        adapter.insert(note, position);
     }
 
     private void fillArrayAdapter(ArrayList<Note> notes) {
@@ -101,59 +110,58 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
                         Note n = (Note) parent.getItemAtPosition(position);
                         intent.putExtra(NOTE_ID, String.valueOf(n.getId()));
-                        startActivity(intent);
+                        intent.putExtra(NOTE_POSITION, String.valueOf(position));
+                        Log.i("Debug Button", "clicked");
+                        startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
                     }
                 });
     }
 
     public void addNote(View view) {
         Intent intent = new Intent(this, AddNoteActivity.class);
-        startActivityForResult(intent, AddNoteActivity.ADD_NOTE_ACTIVITY_OK);
+        startActivityForResult(intent, AddNoteActivity.OK);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (resultCode){
-            case AddNoteActivity.ADD_NOTE_ACTIVITY_OK:
-                Note new_note = data.getExtras().getParcelable(AddNoteActivity.ADD_NOTE_ACTIVITY_NEW_NOTE);
-                addNoteToAdapter(new_note);
-                break;
+        if (data != null) {
+            switch (resultCode) {
+                case AddNoteActivity.OK:
+                    Note new_note = data.getExtras().getParcelable(AddNoteActivity.NEW_NOTE);
+                    addNoteToAdapter(new_note);
+                    break;
+                case ShowAndEditNoteActivity.DELETE:
+                    int position = data.getExtras().getInt(ShowAndEditNoteActivity.NOTE_DELETED);
+                    deleteNoteFromAdapter(position);
+                    break;
+                case ShowAndEditNoteActivity.CHANGED:
+                    int changed_position = data.getExtras().getInt(ShowAndEditNoteActivity.NOTE_CHANGE_POSITION);
+                    Note changed_note = data.getExtras().getParcelable(ShowAndEditNoteActivity.NOTE_CHANGE);
+                    updateNoteOnAdapter(changed_position, changed_note);
+                    break;
 
+            }
         }
     }
-
-    //    @Override
-//    protected void onNewIntent(Intent intent) {
-//        super.onNewIntent(intent);
-//        setIntent(intent);
-//    }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        Intent intent = getIntent();
-//        if (intent.getExtras() != null )
-//        {
-//            // do smthng
-//        }
-////        refreshContent();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
         ArrayList<Note> notes = new ArrayList<Note>();
         int count = adapter.getCount();
-//        outState.putInt(NOTES_BUNDLE_COUNT, count);
-
         for (int i = 0; i < count; i++)
         {
             notes.add((Note) adapter.getItem(i));
         }
         NoteParcelStorage storage = new NoteParcelStorage(notes);
-
+        Log.i("Debug Bundle Resume", "storage saved");
         outState.putParcelable(NOTES_BUNDLE_VALUE, storage);
-        super.onSaveInstanceState(outState);
     }
 }

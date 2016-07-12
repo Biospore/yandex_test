@@ -8,9 +8,9 @@ import android.widget.EditText;
 import android.widget.RemoteViews;
 
 public class AddNoteActivity extends AppCompatActivity {
-    public static final int ADD_NOTE_ACTIVITY_OK = 0;
-    public static final int ADD_NOTE_ACTIVITY_ERROR = 1;
-    public static final String ADD_NOTE_ACTIVITY_NEW_NOTE = "note";
+    public static final int OK = 0;
+    public static final int ERROR = 1;
+    public static final String NEW_NOTE = "new_note";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +32,15 @@ public class AddNoteActivity extends AppCompatActivity {
                 db.addNote(new_note);
 
             Intent result = new Intent();
-            result.putExtra(ADD_NOTE_ACTIVITY_NEW_NOTE, new_note);
-            setResult(ADD_NOTE_ACTIVITY_OK, result);
+            result.putExtra(NEW_NOTE, new_note);
+            setResult(OK, result);
 
             //else {/*Warning that title is empty or text is empty*/}
             /*              ^             */
             /*Problem with /|\ solved - just add empty value and show placeholder on screen*/
             /*              |           */
         } else {
-            setResult(ADD_NOTE_ACTIVITY_ERROR);
+            setResult(ERROR);
             throw (new RemoteViews.ActionException("Null title or text"));
         }
         db.close();

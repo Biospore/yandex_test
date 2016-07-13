@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    tools:context="biospore.yandex_test.MainActivity"
+    android:layout_height="match_parent">
+
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_weight="15"
+        android:id="@+id/main_view"
+        android:numColumns="2"
+        android:layout_height="0dp">
+    </GridView>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/button"
+            android:background="@color/green"
+            android:text="@string/add_note"
+            android:onClick="addNote"/>
+
+</LinearLayout>

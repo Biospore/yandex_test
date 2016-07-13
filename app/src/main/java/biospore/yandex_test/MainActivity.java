@@ -8,12 +8,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ListView;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ListView listView;
+    private View mainView;
+//    private WeakReference<ListView> weakListView;
     private static String NOTES_BUNDLE_VALUE = "notes";
     private static ArrayList<String> titles = new ArrayList<String>();
     NoteDatabaseHelper db;
@@ -21,28 +25,17 @@ public class MainActivity extends AppCompatActivity {
     public static final String NOTE_ID = "biospore.yandex_test.NOTE_ID";
     public static final String NOTE_POSITION = "note_postion";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-        Log.i("Bundle Resume", "oncreate");
-
         db = new NoteDatabaseHelper(this);
-        listView = (ListView) findViewById(R.id.list_view);
-
+        mainView = findViewById(R.id.main_view);
         createAdapter();
-
         if (savedInstanceState != null)
         {
-            Log.i("Debug Bundle Resume", "instance is not null");
-
-
             NoteParcelStorage storage = (NoteParcelStorage) savedInstanceState.get(NOTES_BUNDLE_VALUE);
             if (storage != null) {
-                Log.i("Debug Bundle Resume", "storage is not null");
-
                 fillArrayAdapter(storage.getNotes());
             }
         }
@@ -66,55 +59,103 @@ public class MainActivity extends AppCompatActivity {
                 titles
         );
 
-        listView.setAdapter(adapter);
+        View view = getView();
+        if (view.getClass() == GridView.class)
+        {
+            ((GridView) view).setAdapter(adapter);
+        }
+        else if (view.getClass() == ListView.class)
+        {
+            ((ListView) view).setAdapter(adapter);
+        }
     }
 
     private void addNoteToAdapter(Note note)
     {
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+        ArrayAdapter adapter = getViewAdapter();
         if (note.getTitle().isEmpty())
             note.setTitle(getString(R.string.empty_title));
             /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
         adapter.add(note);
     }
 
+    private ArrayAdapter getViewAdapter()
+    {
+//        return (ArrayAdapter) weakListView.get().getAdapter();
+        View view = getView();
+        if (view.getClass() == GridView.class)
+        {
+            return (ArrayAdapter) ((GridView) view).getAdapter();
+        }
+        else if (view.getClass() == ListView.class)
+        {
+            return (ArrayAdapter) ((ListView) view).getAdapter();
+        }
+        else
+        {
+            throw new ExceptionInInitializerError("No adapter initialized");
+        }
+
+    }
+
+    private View getView()
+    {
+        return mainView;
+    }
+
+
     private void deleteNoteFromAdapter(int position)
     {
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+//        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+        ArrayAdapter adapter = getViewAdapter();
         adapter.remove(adapter.getItem(position));
     }
 
     private void updateNoteOnAdapter(int position, Note note)
     {
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+        ArrayAdapter adapter = getViewAdapter();
         adapter.remove(adapter.getItem(position));
         adapter.insert(note, position);
     }
 
     private void fillArrayAdapter(ArrayList<Note> notes) {
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
-
+        ArrayAdapter adapter = getViewAdapter();
         adapter.clear();
         titles.clear();
-        ((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
+        getViewAdapter().notifyDataSetChanged();
         for (Note n : notes) {
             if (n.getTitle().isEmpty())
                 n.setTitle(getString(R.string.empty_title));
             /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
             adapter.add(n);
         }
-        listView.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
-                        Note n = (Note) parent.getItemAtPosition(position);
-                        intent.putExtra(NOTE_ID, String.valueOf(n.getId()));
-                        intent.putExtra(NOTE_POSITION, String.valueOf(position));
-                        Log.i("Debug Button", "clicked");
-                        startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
-                    }
-                });
+        setItemClickListenerToView(getView());
+    }
+
+    private AdapterView.OnItemClickListener getOnItemClickListener()
+    {
+        return new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
+                Note n = (Note) parent.getItemAtPosition(position);
+                intent.putExtra(NOTE_ID, String.valueOf(n.getId()));
+                intent.putExtra(NOTE_POSITION, String.valueOf(position));
+                startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
+            }
+        };
+    }
+
+    private void setItemClickListenerToView(View view)
+    {
+        if (view.getClass() == GridView.class)
+        {
+            ((GridView) view).setOnItemClickListener(getOnItemClickListener());
+        }
+        else if (view.getClass() == ListView.class)
+        {
+            ((ListView) view).setOnItemClickListener(getOnItemClickListener());
+        }
     }
 
     public void addNote(View view) {
@@ -153,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+        ArrayAdapter adapter = getViewAdapter();
         ArrayList<Note> notes = new ArrayList<Note>();
         int count = adapter.getCount();
         for (int i = 0; i < count; i++)
@@ -161,7 +202,6 @@ public class MainActivity extends AppCompatActivity {
             notes.add((Note) adapter.getItem(i));
         }
         NoteParcelStorage storage = new NoteParcelStorage(notes);
-        Log.i("Debug Bundle Resume", "storage saved");
         outState.putParcelable(NOTES_BUNDLE_VALUE, storage);
     }
 }

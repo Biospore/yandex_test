@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private View mainView;
-//    private WeakReference<ListView> weakListView;
+    //    private WeakReference<ListView> weakListView;
     private static String NOTES_BUNDLE_VALUE = "notes";
     private static ArrayList<String> titles = new ArrayList<String>();
     NoteDatabaseHelper db;
@@ -30,27 +30,40 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         db = new NoteDatabaseHelper(this);
-        mainView = findViewById(R.id.main_view);
-        createAdapter();
-        if (savedInstanceState != null)
-        {
+
+        initializeView();
+        initializeAdapter();
+
+        if (savedInstanceState != null) {
             NoteParcelStorage storage = (NoteParcelStorage) savedInstanceState.get(NOTES_BUNDLE_VALUE);
             if (storage != null) {
                 fillArrayAdapter(storage.getNotes());
             }
-        }
-        else
-        {
+        } else {
             ArrayList<Note> notes = db.getAllNotes();
             fillArrayAdapter(notes);
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    private void initializeView() {
 
+        if (viewIsGrid()) {
+            mainView = findViewById(R.id.grid_main_view);
+        } else {
+            mainView = findViewById(R.id.list_main_view);
+        }
     }
+
+    private void initializeAdapter() {
+        createAdapter();
+        setItemClickListenerToView(mainView);
+    }
+
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//
+//    }
 
     private void createAdapter() {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(
@@ -59,19 +72,15 @@ public class MainActivity extends AppCompatActivity {
                 titles
         );
 
-        View view = getView();
-        if (view.getClass() == GridView.class)
-        {
-            ((GridView) view).setAdapter(adapter);
-        }
-        else if (view.getClass() == ListView.class)
-        {
-            ((ListView) view).setAdapter(adapter);
+        Log.i("VT", String.valueOf(viewIsGrid()));
+        if (viewIsGrid()) {
+            ((GridView) mainView).setAdapter(adapter);
+        } else {
+            ((ListView) mainView).setAdapter(adapter);
         }
     }
 
-    private void addNoteToAdapter(Note note)
-    {
+    private void addNoteToAdapter(Note note) {
         ArrayAdapter adapter = getViewAdapter();
         if (note.getTitle().isEmpty())
             note.setTitle(getString(R.string.empty_title));
@@ -79,40 +88,25 @@ public class MainActivity extends AppCompatActivity {
         adapter.add(note);
     }
 
-    private ArrayAdapter getViewAdapter()
-    {
-//        return (ArrayAdapter) weakListView.get().getAdapter();
-        View view = getView();
-        if (view.getClass() == GridView.class)
-        {
-            return (ArrayAdapter) ((GridView) view).getAdapter();
-        }
-        else if (view.getClass() == ListView.class)
-        {
-            return (ArrayAdapter) ((ListView) view).getAdapter();
-        }
-        else
-        {
-            throw new ExceptionInInitializerError("No adapter initialized");
-        }
 
+    private boolean viewIsGrid() {
+        return findViewById(R.id.grid_main_view) != null;
     }
 
-    private View getView()
-    {
-        return mainView;
+    private ArrayAdapter getViewAdapter() {
+
+        if (viewIsGrid()) {
+            return (ArrayAdapter) ((GridView) mainView).getAdapter();
+        }
+        return (ArrayAdapter) ((ListView) mainView).getAdapter();
     }
 
-
-    private void deleteNoteFromAdapter(int position)
-    {
-//        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+    private void deleteNoteFromAdapter(int position) {
         ArrayAdapter adapter = getViewAdapter();
         adapter.remove(adapter.getItem(position));
     }
 
-    private void updateNoteOnAdapter(int position, Note note)
-    {
+    private void updateNoteOnAdapter(int position, Note note) {
         ArrayAdapter adapter = getViewAdapter();
         adapter.remove(adapter.getItem(position));
         adapter.insert(note, position);
@@ -129,11 +123,9 @@ public class MainActivity extends AppCompatActivity {
             /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
             adapter.add(n);
         }
-        setItemClickListenerToView(getView());
     }
 
-    private AdapterView.OnItemClickListener getOnItemClickListener()
-    {
+    private AdapterView.OnItemClickListener getOnItemClickListener() {
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -146,14 +138,10 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-    private void setItemClickListenerToView(View view)
-    {
-        if (view.getClass() == GridView.class)
-        {
+    private void setItemClickListenerToView(View view) {
+        if (viewIsGrid()) {
             ((GridView) view).setOnItemClickListener(getOnItemClickListener());
-        }
-        else if (view.getClass() == ListView.class)
-        {
+        } else {
             ((ListView) view).setOnItemClickListener(getOnItemClickListener());
         }
     }
@@ -197,8 +185,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter adapter = getViewAdapter();
         ArrayList<Note> notes = new ArrayList<Note>();
         int count = adapter.getCount();
-        for (int i = 0; i < count; i++)
-        {
+        for (int i = 0; i < count; i++) {
             notes.add((Note) adapter.getItem(i));
         }
         NoteParcelStorage storage = new NoteParcelStorage(notes);

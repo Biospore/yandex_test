@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -13,13 +15,14 @@ import android.widget.ListView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private View mainView;
+    private AbsListView mainView;
     //    private WeakReference<ListView> weakListView;
     private static String NOTES_BUNDLE_VALUE = "notes";
-    private static ArrayList<String> titles = new ArrayList<String>();
+    private static List<String> titles = new ArrayList<String>();
     NoteDatabaseHelper db;
 
     public static final String NOTE_ID = "biospore.yandex_test.NOTE_ID";
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 //            mainView = findViewById(R.id.list_main_view);
 //        }
 
-        mainView = findViewById(R.id.main_view);
+        mainView = (AbsListView) findViewById(R.id.main_view);
     }
 
     private void initializeAdapter() {
@@ -68,26 +71,29 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     private void createAdapter() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+//        ArrayAdapter<String> add = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,titles);
+        EvenOddAdapter<String> adapter = new EvenOddAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
                 titles
         );
 
+
+
 //        Log.i("VT", String.valueOf(viewIsGrid()));
-        if (mainView instanceof GridView) {
-            ((GridView) mainView).setAdapter(adapter);
-        } else if (mainView instanceof ListView) {
-            ((ListView) mainView).setAdapter(adapter);
-        } else {
-
-        }
-
+//        if (mainView instanceof GridView) {
+//            ((GridView) mainView).setAdapter(adapter);
+//        } else if (mainView instanceof ListView) {
+//            ((ListView) mainView).setAdapter(adapter);
+//        } else {
+//
+//        }
+        mainView.setAdapter(adapter);
 
     }
 
     private void addNoteToAdapter(Note note) {
-        ArrayAdapter adapter = getViewAdapter();
+        EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
         if (note.getTitle().isEmpty())
             note.setTitle(getString(R.string.empty_title));
             /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
@@ -100,33 +106,34 @@ public class MainActivity extends AppCompatActivity {
 ////        return findViewById(R.id.grid_main_view) != null;
 //    }
 
-    private ArrayAdapter getViewAdapter() {
+    private Adapter getViewAdapter() {
 
-        if (mainView instanceof GridView) {
-            return (ArrayAdapter) ((GridView) mainView).getAdapter();
-        } else if (mainView instanceof ListView) {
-            return (ArrayAdapter) ((ListView) mainView).getAdapter();
-        } else {
-            throw new RuntimeException("Wrong View");
-        }
+//        if (mainView instanceof GridView) {
+//            return (EvenOddAdapter) ((GridView) mainView).getAdapter();
+//        } else if (mainView instanceof ListView) {
+//            return (EvenOddAdapter) ((ListView) mainView).getAdapter();
+//        } else {
+//            throw new RuntimeException("Wrong View");
+//        }
+        return mainView.getAdapter();
     }
 
     private void deleteNoteFromAdapter(int position) {
-        ArrayAdapter adapter = getViewAdapter();
+        EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
         adapter.remove(adapter.getItem(position));
     }
 
     private void updateNoteOnAdapter(int position, Note note) {
-        ArrayAdapter adapter = getViewAdapter();
+        EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
         adapter.remove(adapter.getItem(position));
         adapter.insert(note, position);
     }
 
     private void fillArrayAdapter(ArrayList<Note> notes) {
-        ArrayAdapter adapter = getViewAdapter();
+        EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
         adapter.clear();
         titles.clear();
-        getViewAdapter().notifyDataSetChanged();
+//        getViewAdapter().notifyDataSetChanged();
         for (Note n : notes) {
             if (n.getTitle().isEmpty())
                 n.setTitle(getString(R.string.empty_title));
@@ -146,6 +153,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
             }
         };
+    }
+
+    private void configureLayoutManager()
+    {
+//        mainView.setLa
     }
 
     private void setItemClickListenerToView(View view) {
@@ -194,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        ArrayAdapter adapter = getViewAdapter();
+        EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
         ArrayList<Note> notes = new ArrayList<Note>();
         int count = adapter.getCount();
         for (int i = 0; i < count; i++) {

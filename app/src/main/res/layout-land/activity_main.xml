@@ -10,7 +10,7 @@
     <GridView
         android:layout_width="match_parent"
         android:layout_weight="15"
-        android:id="@+id/grid_main_view"
+        android:id="@+id/main_view"
         android:numColumns="2"
         android:layout_height="0dp">
     </GridView>

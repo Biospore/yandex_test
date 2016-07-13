@@ -47,11 +47,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeView() {
 
-        if (viewIsGrid()) {
-            mainView = findViewById(R.id.grid_main_view);
-        } else {
-            mainView = findViewById(R.id.list_main_view);
-        }
+//        if (viewIsGrid()) {
+//            mainView = findViewById(R.id.grid_main_view);
+//        } else {
+//            mainView = findViewById(R.id.list_main_view);
+//        }
+
+        mainView = findViewById(R.id.main_view);
     }
 
     private void initializeAdapter() {
@@ -72,12 +74,16 @@ public class MainActivity extends AppCompatActivity {
                 titles
         );
 
-        Log.i("VT", String.valueOf(viewIsGrid()));
-        if (viewIsGrid()) {
+//        Log.i("VT", String.valueOf(viewIsGrid()));
+        if (mainView instanceof GridView) {
             ((GridView) mainView).setAdapter(adapter);
-        } else {
+        } else if (mainView instanceof ListView) {
             ((ListView) mainView).setAdapter(adapter);
+        } else {
+
         }
+
+
     }
 
     private void addNoteToAdapter(Note note) {
@@ -89,16 +95,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private boolean viewIsGrid() {
-        return findViewById(R.id.grid_main_view) != null;
-    }
+//    private boolean viewIsGrid() { //deprecated
+//        return mainView instanceof GridView;
+////        return findViewById(R.id.grid_main_view) != null;
+//    }
 
     private ArrayAdapter getViewAdapter() {
 
-        if (viewIsGrid()) {
+        if (mainView instanceof GridView) {
             return (ArrayAdapter) ((GridView) mainView).getAdapter();
+        } else if (mainView instanceof ListView) {
+            return (ArrayAdapter) ((ListView) mainView).getAdapter();
+        } else {
+            throw new RuntimeException("Wrong View");
         }
-        return (ArrayAdapter) ((ListView) mainView).getAdapter();
     }
 
     private void deleteNoteFromAdapter(int position) {
@@ -139,10 +149,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setItemClickListenerToView(View view) {
-        if (viewIsGrid()) {
+        if (mainView instanceof GridView) {
             ((GridView) view).setOnItemClickListener(getOnItemClickListener());
-        } else {
+        } else if (mainView instanceof ListView) {
             ((ListView) view).setOnItemClickListener(getOnItemClickListener());
+        } else {
+            throw new RuntimeException("Wrong View");
         }
     }
 

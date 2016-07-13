@@ -8,9 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by hsxrjd on 13.07.16.
@@ -22,8 +25,8 @@ public class EvenOddAdapter<T> extends BaseAdapter {
     * */
     private final LayoutInflater tInflater;
     private List<T> tObjects;
-    //    private Context tContext;
     private int tResource;
+    private int counter = 0;
 
     public EvenOddAdapter(Context context, @LayoutRes int resource, @NonNull List<T> objects) {
 //        tContext = context;
@@ -74,29 +77,44 @@ public class EvenOddAdapter<T> extends BaseAdapter {
 
     private View createViewFromResource(LayoutInflater inflater, int position, View convertView, ViewGroup parent, int resource) {
         BaseViewItemHolder holder;
-        T item = getItem(position);
+
 
         if (convertView == null) {
+
 
             convertView = inflater.inflate(resource, parent, false);
             holder = new BaseViewItemHolder();
             holder.textViewItem = (TextView) convertView.findViewById(R.id.text_ya_test_1);
+            holder.linearLayout = (LinearLayout) convertView.findViewById(R.id.linear_layout_ya_test_1);
 //            Log.i("VH", "first");
             convertView.setTag(holder);
         } else {
 //            Log.i("VH", "not first");
             holder = (BaseViewItemHolder) convertView.getTag();
         }
+        T item = getItem(position);
 
         if (item != null) {
+
+
+            Log.i("VH", item.toString() + "\t" + position);
+            Log.i("VH", String.valueOf((position - 3) %4) + "\t" + position);
+//            if ((position-3) %4 == 0)
+//            {
+//                return  convertView;
+//            }
             holder.textViewItem.setText(item.toString());
+
         }
-        
+//        Log.i("VH", parent.getClass().toString());
+
+
         return convertView;
     }
 
     private static class BaseViewItemHolder {
         TextView textViewItem;
+        LinearLayout linearLayout;
     }
 
 }

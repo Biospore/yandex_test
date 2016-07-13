@@ -1,14 +1,13 @@
 package biospore.yandex_test;
 
 import android.content.Context;
-import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -23,9 +22,8 @@ public class EvenOddAdapter<T> extends BaseAdapter {
     * */
     private final LayoutInflater tInflater;
     private List<T> tObjects;
-//    private Context tContext;
+    //    private Context tContext;
     private int tResource;
-//    private int tDropDownResource;
 
     public EvenOddAdapter(Context context, @LayoutRes int resource, @NonNull List<T> objects) {
 //        tContext = context;
@@ -75,21 +73,30 @@ public class EvenOddAdapter<T> extends BaseAdapter {
     }
 
     private View createViewFromResource(LayoutInflater inflater, int position, View convertView, ViewGroup parent, int resource) {
-        View view;
-        TextView text;
+        BaseViewItemHolder holder;
         T item = getItem(position);
+
         if (convertView == null) {
-            view = inflater.inflate(resource, parent, false);
+
+            convertView = inflater.inflate(resource, parent, false);
+            holder = new BaseViewItemHolder();
+            holder.textViewItem = (TextView) convertView.findViewById(R.id.text_ya_test_1);
+//            Log.i("VH", "first");
+            convertView.setTag(holder);
         } else {
-            view = convertView;
+//            Log.i("VH", "not first");
+            holder = (BaseViewItemHolder) convertView.getTag();
         }
-        text = (TextView) view;
-        text.setText(item.toString());
-        return null;
+
+        if (item != null) {
+            holder.textViewItem.setText(item.toString());
+        }
+        
+        return convertView;
     }
 
-    private static class BaseViewHolder {
-        GridView gridView;
+    private static class BaseViewItemHolder {
+        TextView textViewItem;
     }
 
 }

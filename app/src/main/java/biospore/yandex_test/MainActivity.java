@@ -1,26 +1,21 @@
 package biospore.yandex_test;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private AbsListView mainView;
-    //    private WeakReference<ListView> weakListView;
     private static String NOTES_BUNDLE_VALUE = "notes";
     private static List<String> titles = new ArrayList<String>();
     NoteDatabaseHelper db;
@@ -49,13 +44,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeView() {
-
-//        if (viewIsGrid()) {
-//            mainView = findViewById(R.id.grid_main_view);
-//        } else {
-//            mainView = findViewById(R.id.list_main_view);
-//        }
-
         mainView = (AbsListView) findViewById(R.id.main_view);
     }
 
@@ -64,30 +52,15 @@ public class MainActivity extends AppCompatActivity {
         setItemClickListenerToView(mainView);
     }
 
-//    @Override
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        super.onConfigurationChanged(newConfig);
-//
-//    }
 
     private void createAdapter() {
 //        ArrayAdapter<String> add = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,titles);
         EvenOddAdapter<String> adapter = new EvenOddAdapter<String>(
                 this,
-                android.R.layout.simple_list_item_1,
+                R.layout.yandex_test_list_item_0,
                 titles
         );
 
-
-
-//        Log.i("VT", String.valueOf(viewIsGrid()));
-//        if (mainView instanceof GridView) {
-//            ((GridView) mainView).setAdapter(adapter);
-//        } else if (mainView instanceof ListView) {
-//            ((ListView) mainView).setAdapter(adapter);
-//        } else {
-//
-//        }
         mainView.setAdapter(adapter);
 
     }
@@ -101,20 +74,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    private boolean viewIsGrid() { //deprecated
-//        return mainView instanceof GridView;
-////        return findViewById(R.id.grid_main_view) != null;
-//    }
-
     private Adapter getViewAdapter() {
 
-//        if (mainView instanceof GridView) {
-//            return (EvenOddAdapter) ((GridView) mainView).getAdapter();
-//        } else if (mainView instanceof ListView) {
-//            return (EvenOddAdapter) ((ListView) mainView).getAdapter();
-//        } else {
-//            throw new RuntimeException("Wrong View");
-//        }
         return mainView.getAdapter();
     }
 
@@ -155,10 +116,6 @@ public class MainActivity extends AppCompatActivity {
         };
     }
 
-    private void configureLayoutManager()
-    {
-//        mainView.setLa
-    }
 
     private void setItemClickListenerToView(View view) {
         if (mainView instanceof GridView) {

@@ -1,21 +1,22 @@
 package biospore.yandex_test;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+//import android.support.v7.widget.View;
 
-    private AbsListView mainView;
+public class MainActivity extends Activity {
+
+    private RecyclerView mainView;
     private static String NOTES_BUNDLE_VALUE = "notes";
     private static List<String> titles = new ArrayList<String>();
     NoteDatabaseHelper db;
@@ -26,47 +27,46 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_origin);
         db = new NoteDatabaseHelper(this);
+        setContentView(R.layout.activity_main_recycler);
+        mainView = (RecyclerView) findViewById(R.id.main_view);
+        mainView.setAdapter(new EvenOddAdapter<String>(titles));
+        mainView.setLayoutManager(new LinearLayoutManager(this));
+//        Log.i("FFK", "loaded");
 
-        initializeView();
-        initializeAdapter();
+//        initializeAdapter();
 
         if (savedInstanceState != null) {
             NoteParcelStorage storage = (NoteParcelStorage) savedInstanceState.get(NOTES_BUNDLE_VALUE);
             if (storage != null) {
-                fillArrayAdapter(storage.getNotes());
+                fillAdapter(storage.getNotes());
             }
         } else {
             ArrayList<Note> notes = db.getAllNotes();
-            fillArrayAdapter(notes);
+            fillAdapter(notes);
         }
     }
 
-    private void initializeView() {
-        mainView = (AbsListView) findViewById(R.id.main_view);
-    }
-
     private void initializeAdapter() {
+        Log.i("FFK", "test");
         createAdapter();
         setItemClickListenerToView(mainView);
     }
 
     /* TODO
-    * переписать все на recycler view
+    *  переписать все на recycler view
     *  все должно выглядеть также
     *  одна xml на landscape и portrait
     * */
     private void createAdapter() {
 //        ArrayAdapter<String> add = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,titles);
         EvenOddAdapter<String> adapter = new EvenOddAdapter<String>(
-                this,
-                R.layout.yandex_test_list_item_0,
+//                this,
+//                R.layout.yandex_test_list_item_0,
                 titles
         );
 
         mainView.setAdapter(adapter);
-
     }
 
     private void addNoteToAdapter(Note note) {
@@ -78,13 +78,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private Adapter getViewAdapter() {
+    private EvenOddAdapter getViewAdapter() {
 
-        return mainView.getAdapter();
+        return (EvenOddAdapter) mainView.getAdapter();
+
     }
 
     private void deleteNoteFromAdapter(int position) {
         EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
+
         adapter.remove(adapter.getItem(position));
     }
 
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.insert(note, position);
     }
 
-    private void fillArrayAdapter(ArrayList<Note> notes) {
+    private void fillAdapter(ArrayList<Note> notes) {
         EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
         adapter.clear();
         titles.clear();
@@ -121,14 +123,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void setItemClickListenerToView(View view) {
-        if (mainView instanceof GridView) {
-            ((GridView) view).setOnItemClickListener(getOnItemClickListener());
-        } else if (mainView instanceof ListView) {
-            ((ListView) view).setOnItemClickListener(getOnItemClickListener());
-        } else {
-            throw new RuntimeException("Wrong View");
-        }
+    private void setItemClickListenerToView(RecyclerView view) {
+//        if (mainView instanceof GridView) {
+//            ((GridView) view).setOnItemClickListener(getOnItemClickListener());
+//        } else if (mainView instanceof ListView) {
+//            ((ListView) view).setOnItemClickListener(getOnItemClickListener());
+//        } else {
+//            throw new RuntimeException("Wrong View");
+//        }
+//        view.setOn
     }
 
     public void addNote(View view) {
@@ -169,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
         ArrayList<Note> notes = new ArrayList<Note>();
-        int count = adapter.getCount();
+        int count = adapter.getItemCount();
         for (int i = 0; i < count; i++) {
             notes.add((Note) adapter.getItem(i));
         }

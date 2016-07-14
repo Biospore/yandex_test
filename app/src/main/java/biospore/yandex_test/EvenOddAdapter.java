@@ -97,8 +97,8 @@ public class EvenOddAdapter<T> extends BaseAdapter {
         if (item != null) {
 
 
-            Log.i("VH", item.toString() + "\t" + position);
-            Log.i("VH", String.valueOf((position - 3) %4) + "\t" + position);
+//            Log.i("VH", item.toString() + "\t" + position);
+//            Log.i("VH", String.valueOf((position - 3) %4) + "\t" + position);
 //            if ((position-3) %4 == 0)
 //            {
 //                return  convertView;

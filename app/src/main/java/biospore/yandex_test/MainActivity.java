@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_origin);
         db = new NoteDatabaseHelper(this);
 
         initializeView();
@@ -52,7 +52,11 @@ public class MainActivity extends AppCompatActivity {
         setItemClickListenerToView(mainView);
     }
 
-
+    /* TODO
+    * переписать все на recycler view
+    *  все должно выглядеть также
+    *  одна xml на landscape и portrait
+    * */
     private void createAdapter() {
 //        ArrayAdapter<String> add = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,titles);
         EvenOddAdapter<String> adapter = new EvenOddAdapter<String>(

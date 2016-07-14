@@ -10,25 +10,30 @@ import android.widget.AdapterView;
 /**
  * Created by hsxrjd on 14.07.16.
  */
-public class TestClickListener implements RecyclerView.OnItemTouchListener {
-    AdapterView.OnItemClickListener tListener;
+public class CustomClickListener implements RecyclerView.OnItemTouchListener {
+    OnItemClickListener tListener;
     GestureDetector tGestureDetector;
 
     public interface OnItemClickListener {
-        public void onItemClick(View view, int position);
+        void onItemClick(View view, int position);
     }
 
-    public TestClickListener(Context context, AdapterView.OnItemClickListener listener) {
+    public CustomClickListener(Context context, OnItemClickListener listener) {
         tListener = listener;
+        tGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+        });
+
     }
 
     @Override
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
         View child = rv.findChildViewUnder(e.getX(), e.getY());
-        if (child != null && tListener != null)
-            return false;
-
-//            tListener.onItemClick(child, rv.getChildAdapterPosition(child));
+        if (child != null && tListener != null && tGestureDetector.onTouchEvent(e))
+            tListener.onItemClick(child, rv.getChildAdapterPosition(child));
         return false;
     }
 

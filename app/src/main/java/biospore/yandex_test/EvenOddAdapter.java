@@ -1,12 +1,15 @@
 package biospore.yandex_test;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -22,6 +25,7 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter {
     * */
 //    private final LayoutInflater tInflater;
     private List<T> tObjects;
+
 //    private int tResource;
 
     public EvenOddAdapter(@NonNull List<T> objects) {
@@ -29,6 +33,7 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter {
 //        tInflater = LayoutInflater.from(context);
 //        tResource = resource;
         tObjects = objects;
+//        listener = itemListener;
     }
 
     public void add(T object) {
@@ -51,7 +56,7 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter {
         super.notifyDataSetChanged();
     }
 
-//    @Override
+    //    @Override
 //    public int getCount() {
 //        return tObjects.size();
 //    }
@@ -69,8 +74,8 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        T item = tObjects.get(position);
-        ((EvenOddViewHolder) holder).textViewItem.setText(item.toString());
+//        T item = tObjects.get(position);
+        ((EvenOddViewHolder) holder).textViewItem.setText(tObjects.get(position).toString());
 
     }
 
@@ -126,12 +131,20 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter {
 //        return convertView;
 //    }
 
-    private static class EvenOddViewHolder extends RecyclerView.ViewHolder {
+    private class EvenOddViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView textViewItem;
+
 
         public EvenOddViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             textViewItem = (TextView) itemView.findViewById(R.id.text_ya_test_0);
+        }
+
+        @Override
+        public void onClick(View v) {
+//            Log.i("GGG", v.toString() + "\t" + String.valueOf(getPosition()) + getItem(getPosition()).toString());
+
         }
     }
 

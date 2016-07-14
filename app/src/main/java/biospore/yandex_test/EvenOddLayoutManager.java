@@ -1,16 +1,32 @@
 package biospore.yandex_test;
 
+import android.content.Context;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ViewGroup;
 
 /**
  * Created by hsxrjd on 14.07.16.
  */
-public class EvenOddLayoutManager extends RecyclerView.LayoutManager {
-    @Override
-    public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-        return new RecyclerView.LayoutParams(
-                RecyclerView.LayoutParams.MATCH_PARENT,
-                RecyclerView.LayoutParams.MATCH_PARENT);
+public class EvenOddLayoutManager extends GridLayoutManager {
+
+
+    public EvenOddLayoutManager(Context context, int spanCount) {
+        super(context, spanCount);
     }
+
+    @Override
+    public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+
+//        Log.i("VDH", String.valueOf(HORIZONTAL));
+        super.onLayoutChildren(recycler, state);
+    }
+
+    @Override
+    public void setSpanSizeLookup(SpanSizeLookup spanSizeLookup) {
+        super.setSpanSizeLookup(spanSizeLookup);
+    }
+
 }

@@ -2,7 +2,9 @@ package biospore.yandex_test;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -30,8 +32,15 @@ public class MainActivity extends Activity {
         db = new NoteDatabaseHelper(this);
         setContentView(R.layout.activity_main_recycler);
         mainView = (RecyclerView) findViewById(R.id.main_view);
-        mainView.setAdapter(new EvenOddAdapter<String>(titles));
-        mainView.setLayoutManager(new LinearLayoutManager(this));
+        EvenOddAdapter<String> adapter = new EvenOddAdapter<String>(titles);
+
+//        mainView.addOnItemTouchListener();
+        mainView.setAdapter(adapter);
+        EvenOddLayoutManager layoutManager = new EvenOddLayoutManager(
+                this,
+                2);
+        layoutManager.setSpanSizeLookup(getSpanSize());
+        mainView.setLayoutManager(layoutManager);
 //        Log.i("FFK", "loaded");
 
 //        initializeAdapter();
@@ -47,27 +56,46 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void initializeAdapter() {
-        Log.i("FFK", "test");
-        createAdapter();
-        setItemClickListenerToView(mainView);
+
+    private GridLayoutManager.SpanSizeLookup getSpanSize()
+    {
+        return new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                Log.i("VGG", String.valueOf(position) + "\t" + String.valueOf(position % 4));
+//                return 2;
+//                if (getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+//                    return 2;
+//                } else return 1;
+                if (position == 0)
+                    return 1;
+                return (position % 3 == 0)? 2:1;
+
+            }
+        };
     }
+
+//    private void initializeAdapter() {
+////        Log.i("FFK", "test");
+////        createAdapter();
+////        setItemClickListenerToView(mainView);
+//    }
 
     /* TODO
     *  переписать все на recycler view
     *  все должно выглядеть также
     *  одна xml на landscape и portrait
     * */
-    private void createAdapter() {
-//        ArrayAdapter<String> add = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,titles);
-        EvenOddAdapter<String> adapter = new EvenOddAdapter<String>(
-//                this,
-//                R.layout.yandex_test_list_item_0,
-                titles
-        );
-
-        mainView.setAdapter(adapter);
-    }
+//    private void createAdapter() {
+////        ArrayAdapter<String> add = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,titles);
+//        EvenOddAdapter<String> adapter = new EvenOddAdapter<String>(
+////                this,
+////                R.layout.yandex_test_list_item_0,
+//                titles
+//        );
+//
+//        mainView.setAdapter(adapter);
+//    }
 
     private void addNoteToAdapter(Note note) {
         EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
@@ -110,29 +138,64 @@ public class MainActivity extends Activity {
     }
 
     private AdapterView.OnItemClickListener getOnItemClickListener() {
+//        return new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
+//
+//                intent.putExtra(NOTE_ID, String.valueOf(n.getId()));
+//                intent.putExtra(NOTE_POSITION, String.valueOf(position));
+//                startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
+//            }
+//        }
+////        return new View.OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+////                Intent intent = new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
+////                Note n = (Note) parent.getItemAtPosition(position);
+////                intent.putExtra(NOTE_ID, String.valueOf(n.getId()));
+////                intent.putExtra(NOTE_POSITION, String.valueOf(position));
+////                startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
+////            }
+////
+////            @Override
+////            public void onClick(AdapterView<?> parent, View view, int position, long id) {
+////                Intent intent = new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
+////                Note n = (Note) parent.getItemAtPosition(position);
+////                intent.putExtra(NOTE_ID, String.valueOf(n.getId()));
+////                intent.putExtra(NOTE_POSITION, String.valueOf(position));
+////                startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
+////            }
+////        };
+//        return null;
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
-                Note n = (Note) parent.getItemAtPosition(position);
-                intent.putExtra(NOTE_ID, String.valueOf(n.getId()));
+                Note note = (Note) parent.getItemAtPosition(position);
+                intent.putExtra(NOTE_ID, String.valueOf(note.getId()));
                 intent.putExtra(NOTE_POSITION, String.valueOf(position));
                 startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
             }
         };
     }
 
-
-    private void setItemClickListenerToView(RecyclerView view) {
-//        if (mainView instanceof GridView) {
-//            ((GridView) view).setOnItemClickListener(getOnItemClickListener());
-//        } else if (mainView instanceof ListView) {
-//            ((ListView) view).setOnItemClickListener(getOnItemClickListener());
-//        } else {
-//            throw new RuntimeException("Wrong View");
-//        }
-//        view.setOn
+    //
+    private Intent getMainActivityIntent() {
+        return new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
     }
+
+
+//    private void setItemClickListenerToView(RecyclerView view) {
+////        if (mainView instanceof GridView) {
+////            ((GridView) view).setOnItemClickListener(getOnClickListener());
+////        } else if (mainView instanceof ListView) {
+////            ((ListView) view).setOnItemClickListener(getOnClickListener());
+////        } else {
+////            throw new RuntimeException("Wrong View");
+////        }
+////        view.setOn
+//    }
 
     public void addNote(View view) {
         Intent intent = new Intent(this, AddNoteActivity.class);

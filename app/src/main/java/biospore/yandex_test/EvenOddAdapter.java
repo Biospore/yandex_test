@@ -1,39 +1,36 @@
 package biospore.yandex_test;
 
-import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by hsxrjd on 13.07.16.
  */
 //public class EvenOddAdapter<T> extends BaseAdapter {
-public class EvenOddAdapter<T> extends RecyclerView.Adapter {
+public class EvenOddAdapter<T> extends RecyclerView.Adapter<EvenOddAdapter.EvenOddViewHolder> {
     /* TODO
     * Пока без синхронизации - для нее (обычно) используется Object
     * Нужно для функций обращающихся к данным
     * */
-//    private final LayoutInflater tInflater;
     private List<T> tObjects;
-
-//    private int tResource;
+    //    private AdapterView.OnItemClickListener mListener;
+//    private CustomClickListener tListener;
+    private WeakReference<CustomClickListener> tListener;
 
     public EvenOddAdapter(@NonNull List<T> objects) {
-//        tContext = context;
-//        tInflater = LayoutInflater.from(context);
-//        tResource = resource;
         tObjects = objects;
-//        listener = itemListener;
+    }
+
+    public EvenOddAdapter() {
+        tObjects = new ArrayList<>();
     }
 
     public void add(T object) {
@@ -56,27 +53,25 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter {
         super.notifyDataSetChanged();
     }
 
-    //    @Override
-//    public int getCount() {
-//        return tObjects.size();
-//    }
-//
-//    @Override
     public T getItem(int position) {
         return tObjects.get(position);
     }
 
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.yandex_test_list_item_0, parent, false);
-        return new EvenOddViewHolder(item);
+    public void setOnItemClickListener(WeakReference<CustomClickListener> listener) {
+        tListener = listener;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-//        T item = tObjects.get(position);
-        ((EvenOddViewHolder) holder).textViewItem.setText(tObjects.get(position).toString());
+    public EvenOddViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.yandex_test_list_item_0, parent, false);
+        EvenOddViewHolder holder = new EvenOddViewHolder(item);
+        holder.setOnItemClickListener(tListener);
+        return holder;
+    }
 
+    @Override
+    public void onBindViewHolder(EvenOddViewHolder holder, int position) {
+        holder.textViewItem.setText(tObjects.get(position).toString());
     }
 
     @Override
@@ -88,65 +83,30 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter {
     public int getItemCount() {
         return tObjects.size();
     }
-//
-//    @Override
-//    public View getView(int position, View convertView, ViewGroup parent) {
-//        return createViewFromResource(tInflater, position, convertView, parent, tResource);
-//    }
 
-//    private View createViewFromResource(LayoutInflater inflater, int position, View convertView, ViewGroup parent, int resource) {
-//        EvenOddViewHolder holder;
-//
-//
-//        if (convertView == null) {
-//
-//
-//            convertView = inflater.inflate(resource, parent, false);
-//            holder = new EvenOddViewHolder();
-//            holder.textViewItem = (TextView) convertView.findViewById(R.id.text_ya_test_1);
-//            holder.linearLayout = (LinearLayout) convertView.findViewById(R.id.linear_layout_ya_test_1);
-////            Log.i("VH", "first");
-//            convertView.setTag(holder);
-//        } else {
-////            Log.i("VH", "not first");
-//            holder = (EvenOddViewHolder) convertView.getTag();
-//        }
-////        T item = getItem(position);
-//
-//        if (item != null) {
-//
-//
-////            Log.i("VH", item.toString() + "\t" + position);
-////            Log.i("VH", String.valueOf((position - 3) %4) + "\t" + position);
-////            if ((position-3) %4 == 0)
-////            {
-////                return  convertView;
-////            }
-//            holder.textViewItem.setText(item.toString());
-//
-//        }
-////        Log.i("VH", parent.getClass().toString());
-//
-//
-//        return convertView;
-//    }
-
-    private class EvenOddViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class EvenOddViewHolder extends RecyclerView.ViewHolder {
         TextView textViewItem;
+        //        CustomClickListener tListener;
+        WeakReference<CustomClickListener> tListener;
 
-
-        public EvenOddViewHolder(View itemView) {
-            super(itemView);
-            itemView.setOnClickListener(this);
-            textViewItem = (TextView) itemView.findViewById(R.id.text_ya_test_0);
+        public void setOnItemClickListener(WeakReference<CustomClickListener> listener) {
+            tListener = listener;
         }
 
-        @Override
-        public void onClick(View v) {
-//            Log.i("GGG", v.toString() + "\t" + String.valueOf(getPosition()) + getItem(getPosition()).toString());
-
+        public EvenOddViewHolder(final View itemView) {
+            super(itemView);
+            textViewItem = (TextView) itemView.findViewById(R.id.text_ya_test_0);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CustomClickListener listener = tListener.get();
+                    if (listener != null){
+                        listener.onItemClick(v, getAdapterPosition());}
+                    else{
+                        throw new RuntimeException("Listener is null!");}
+                }
+            });
         }
     }
-
 }
 

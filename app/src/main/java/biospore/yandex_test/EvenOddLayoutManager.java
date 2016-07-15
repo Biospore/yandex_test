@@ -3,9 +3,6 @@ package biospore.yandex_test;
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.ViewGroup;
 
 /**
  * Created by hsxrjd on 14.07.16.
@@ -20,7 +17,6 @@ public class EvenOddLayoutManager extends GridLayoutManager {
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
 
-//        Log.i("VDH", String.valueOf(HORIZONTAL));
         super.onLayoutChildren(recycler, state);
     }
 

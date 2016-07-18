@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
-        android:id="@+id/button"
+        android:id="@+id/button_add_note"
         android:background="@color/green"
         android:text="@string/add_note"
         android:onClick="addNote"/>

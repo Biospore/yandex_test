@@ -19,7 +19,7 @@
         android:layout_weight="0"
         android:layout_height="wrap_content"
         android:id="@+id/button"
-        android:background="@color/green"
+        android:background="@drawable/green_background"
         android:text="@string/add_note"
         android:onClick="addNote"/>
 </LinearLayout>

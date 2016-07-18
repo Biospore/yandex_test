@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 public class Note implements Parcelable{
     
-    private int id;
+    private long id;
     private String title;
     private String text;
 
@@ -31,16 +31,16 @@ public class Note implements Parcelable{
 
     private Note(Parcel in)
     {
-        id = in.readInt();
+        id = in.readLong();
         title = in.readString();
         text = in.readString();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -72,7 +72,7 @@ public class Note implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeLong(id);
         dest.writeString(title);
         dest.writeString(text);
     }

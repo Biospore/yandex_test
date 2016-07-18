@@ -3,7 +3,10 @@ package biospore.yandex_test;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.transition.Explode;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.RemoteViews;
 
@@ -15,13 +18,22 @@ public class AddNoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        configureTransition();
         setContentView(R.layout.activity_add_note);
+    }
+
+    private void configureTransition()
+    {
+        Window window = getWindow();
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        window.setExitTransition(new Explode());
+        window.setEnterTransition(new Explode());
     }
 
     public void addNote(View view) {
         NoteDatabaseHelper db = new NoteDatabaseHelper(this);
         EditText title = (EditText) findViewById(R.id.title_field);
-        EditText text =  (EditText) findViewById(R.id.text_field);
+        EditText text = (EditText) findViewById(R.id.text_field);
         /*Working with sql very slow*/
         /*If text or title is null - just throw exception*/
         if (text != null && title != null) {
@@ -29,8 +41,10 @@ public class AddNoteActivity extends AppCompatActivity {
             Note new_note = new Note(
                     title.getText().toString(),
                     text.getText().toString());
-                db.addNote(new_note);
+            Log.i("FAIL ID", String.valueOf(new_note.getId()));
+            db.addNote(new_note);
 
+//            Log.i("IDP A", String.valueOf(new_note.getId()));
             Intent result = new Intent();
             result.putExtra(NEW_NOTE, new_note);
             setResult(OK, result);
@@ -41,9 +55,11 @@ public class AddNoteActivity extends AppCompatActivity {
             /*              |           */
         } else {
             setResult(ERROR);
-            throw (new RemoteViews.ActionException("Null title or text"));
+            throw (new RuntimeException("Null title or text"));
         }
         db.close();
-        finish();
+        finishAfterTransition();
+
+//        finish();
     }
 }

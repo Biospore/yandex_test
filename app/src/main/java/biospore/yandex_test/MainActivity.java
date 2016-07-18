@@ -1,13 +1,19 @@
 package biospore.yandex_test;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
+import android.view.Window;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -21,6 +27,8 @@ public class MainActivity extends Activity implements CustomClickListener {
     private static String NOTES_BUNDLE_VALUE = "notes";
     private static List<Note> notes = new ArrayList<>();
     private WeakReference<EvenOddAdapter> tAdapter;
+    private Point size;
+
     NoteDatabaseHelper db;
 
     public static final String NOTE_ID = "biospore.yandex_test.NOTE_ID";
@@ -38,14 +46,19 @@ public class MainActivity extends Activity implements CustomClickListener {
             throw new RuntimeException("Adapter is null!");
         }
 
+        Log.i("IDP ID", String.valueOf(note.getId()));
+        Log.i("IDP POS", String.valueOf(position));
         intent.putExtra(NOTE_ID, String.valueOf(note.getId()));
         intent.putExtra(NOTE_POSITION, String.valueOf(position));
-        startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, v, "title");
+        startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED, options.toBundle());
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        configureTransition();
+
         db = new NoteDatabaseHelper(this);
         setContentView(R.layout.activity_main_recycler);
         mainView = (RecyclerView) findViewById(R.id.main_view);
@@ -69,6 +82,20 @@ public class MainActivity extends Activity implements CustomClickListener {
             ArrayList<Note> notes = db.getAllNotes();
             fillAdapter(notes);
         }
+        /*
+        adapter.clear();
+        for (Note n: db.getAllNotes())
+        {
+            db.deleteNote(n);
+        }*/
+    }
+
+    private void configureTransition()
+    {
+        Window window = getWindow();
+        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        window.setExitTransition(new Explode());
+        window.setEnterTransition(new Explode());
     }
 
 
@@ -82,8 +109,11 @@ public class MainActivity extends Activity implements CustomClickListener {
                 * */
 
 //              getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                Point size = new Point();
+                if (size == null) {
+                    size = new Point();
+                }
                 display.getSize(size);
+
                 if (size.x <= size.y) {
                     return 2;
                 } else {
@@ -92,7 +122,9 @@ public class MainActivity extends Activity implements CustomClickListener {
                     return ((position + 1) % 3 == 0) ? 2 : 1;
                 }
             }
-        };
+        }
+
+                ;
     }
 
     /* TODO
@@ -100,6 +132,7 @@ public class MainActivity extends Activity implements CustomClickListener {
     *  все должно выглядеть также
     *  одна xml на landscape и portrait
     * */
+
     private void addNoteToAdapter(Note note) {
         EvenOddAdapter adapter = getViewAdapter();
         if (note.getTitle().isEmpty())
@@ -124,6 +157,8 @@ public class MainActivity extends Activity implements CustomClickListener {
     private void updateNoteOnAdapter(int position, Note note) {
         EvenOddAdapter adapter = getViewAdapter();
         adapter.remove(adapter.getItem(position));
+        if (note.getTitle().isEmpty())
+            note.setTitle(getString(R.string.empty_title));
         adapter.insert(note, position);
     }
 
@@ -131,17 +166,18 @@ public class MainActivity extends Activity implements CustomClickListener {
         EvenOddAdapter adapter = getViewAdapter();
         adapter.clear();
         MainActivity.notes.clear();
-        for (Note n : notes) {
-            if (n.getTitle().isEmpty())
-                n.setTitle(getString(R.string.empty_title));
+        for (Note note : notes) {
+            if (note.getTitle().isEmpty())
+                note.setTitle(getString(R.string.empty_title));
             /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
-            adapter.add(n);
+            adapter.add(note);
         }
     }
 
     public void addNote(View view) {
         Intent intent = new Intent(this, AddNoteActivity.class);
-        startActivityForResult(intent, AddNoteActivity.OK);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, view, "title");
+        startActivityForResult(intent, AddNoteActivity.OK, options.toBundle());
     }
 
     @Override

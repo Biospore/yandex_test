@@ -19,6 +19,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:transitionName="@string/title"
             android:id="@+id/title_field"
             android:textColor="@color/black"
             android:inputType="textShortMessage" />

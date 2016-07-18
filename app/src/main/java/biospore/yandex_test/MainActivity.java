@@ -11,25 +11,21 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
 import android.transition.Transition;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-//import android.support.v7.widget.View;
 
 public class MainActivity extends AppCompatActivity implements CustomClickListener {
 
     private RecyclerView mainView;
     private static String NOTES_BUNDLE_VALUE = "notes";
-    //    private static List<Note> notes = new ArrayList<>();
     private WeakReference<EvenOddAdapter> tAdapter;
     private Point size;
 
@@ -50,14 +46,11 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
             throw new RuntimeException("Adapter is null!");
         }
 
-//        Log.i("IDP ID", String.valueOf(note.getId()));
-//        Log.i("IDP POS", String.valueOf(position));
         intent.putExtra(NOTE_ID, String.valueOf(note.getId()));
         intent.putExtra(NOTE_POSITION, String.valueOf(position));
 
         Pair p1 = Pair.create(v, getString(R.string.transition_list_element));
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, p1);
-//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, );
         startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED, options.toBundle());
     }
 
@@ -73,11 +66,9 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
         adapter.setOnItemClickListener(new WeakReference<CustomClickListener>(this));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_test);
-        //toolbar.inflateMenu(R.menu.main_activity_menu);
         setSupportActionBar(toolbar);
-//        Log.i("FATAL", String.valueOf(getSupportActionBar().getTitle()));
         mainView.setAdapter(adapter);
-        tAdapter = new WeakReference<EvenOddAdapter>(adapter);
+        tAdapter = new WeakReference<>(adapter);
         EvenOddLayoutManager layoutManager = new EvenOddLayoutManager(
                 this,
                 2);
@@ -93,42 +84,10 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
             ArrayList<Note> notes = db.getAllNotes();
             fillAdapter(notes);
         }
-        /*
-        adapter.clear();
-        for (Note n: db.getAllNotes())
-        {
-            db.deleteNote(n);
-        }*/
-    }
-
-
-    private Button getAddNoteButton() {
-        Button button = new Button(this);
-        button.setId(R.id.button_add_note);
-
-        final WeakReference<MainActivity> activityReference = new WeakReference<MainActivity>(this);
-        button.setOnClickListener(new View.OnClickListener() {
-            MainActivity activity = activityReference.get();
-
-            @Override
-            public void onClick(View v) {
-                if (activity != null) {
-                    Intent intent = new Intent(activity, AddNoteActivity.class);
-                    Pair p1 = Pair.create(v, getString(R.string.transition_list_element));
-                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, p1);
-//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, view, "title");
-                    startActivityForResult(intent, AddNoteActivity.OK, options.toBundle());
-                }
-            }
-        });
-
-
-        return button;
     }
 
     private void configureTransition() {
         Window window = getWindow();
-//        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         Transition transition = new Explode();
         transition.addTarget(getString(R.string.transition_list_element));
 
@@ -142,11 +101,6 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
         return new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                /*
-                * Возвращаемое значение - количество занимаемых элементом столбцов
-                * */
-
-//              getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 if (size == null) {
                     size = new Point();
                 }
@@ -165,17 +119,10 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
                 ;
     }
 
-    /* TODO
-    *  переписать все на recycler view
-    *  все должно выглядеть также
-    *  одна xml на landscape и portrait
-    * */
-
     private void addNoteToAdapter(Note note) {
         EvenOddAdapter adapter = getViewAdapter();
         if (note.getTitle().isEmpty())
             note.setTitle(getString(R.string.empty_title));
-            /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
         adapter.add(note);
     }
 
@@ -207,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
         for (Note note : notes) {
             if (note.getTitle().isEmpty())
                 note.setTitle(getString(R.string.empty_title));
-            /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
             adapter.add(note);
         }
     }
@@ -216,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
         Intent intent = new Intent(this, AddNoteActivity.class);
         Pair p1 = Pair.create(view, getString(R.string.transition_list_element));
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, p1);
-//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, view, "title");
         startActivityForResult(intent, AddNoteActivity.OK, options.toBundle());
     }
 
@@ -252,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
+        EvenOddAdapter adapter = getViewAdapter();
         ArrayList<Note> notes = new ArrayList<Note>();
         int count = adapter.getItemCount();
         for (int i = 0; i < count; i++) {

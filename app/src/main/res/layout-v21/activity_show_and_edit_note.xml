@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ShowAndEditNoteActivity">
-    <include layout="@layout/toolbar">
-    </include>
+
+    <include layout="@layout/toolbar"/>
     <!--Text fields-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="500"
         android:orientation="vertical">
 
@@ -29,13 +29,12 @@
             <EditText
                 android:id="@+id/title_field"
                 android:layout_width="match_parent"
-                android:textSize="@dimen/title_text_size"
-                android:textColorHint="@color/black"
-
-                android:imeOptions="actionDone|flagNoExtractUi"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext|flagNoExtractUi"
                 android:inputType="textShortMessage"
-                android:textColor="@color/black" />
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="@dimen/title_text_size" />
         </LinearLayout>
 
         <EditText
@@ -43,34 +42,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionDone|flagNoExtractUi"
-            android:textColorHint="@color/black"
-            android:inputType="textMultiLine"
-            android:textColor="@color/black" />
+            android:inputType="text"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black" />
 
     </LinearLayout>
-    <!--Buttons-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
 
-        <!--<Button-->
-            <!--android:id="@+id/edit"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--android:background="@drawable/yellow_background"-->
-            <!--android:onClick="editNote"-->
-            <!--android:text="@string/edit" />-->
-
-        <!--<Button-->
-            <!--android:id="@+id/delete"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--android:background="@drawable/red_background"-->
-            <!--android:onClick="deleteNote"-->
-            <!--android:text="@string/delete" />-->
-    </LinearLayout>
 
 </LinearLayout>

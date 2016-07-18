@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     android:id="@+id/linear_layout_ya_test_1"
-    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:transitionName="@string/transition_list_element"
-    android:background="?android:attr/selectableItemBackground">
+    android:orientation="horizontal"
+    android:transitionName="@string/transition_list_element">
 
     <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
-        android:src="@mipmap/ic_launcher"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/image_desc"
         android:padding="2dp"
-        android:layout_height="wrap_content">
+        android:src="@mipmap/ic_launcher">
 
     </ImageView>
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:textSize="@dimen/title_text_size"
-        android:id="@+id/text_ya_test_0"
 
-        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/text_ya_test_0"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:layout_height="match_parent" />
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textSize="@dimen/title_text_size" />
 </LinearLayout>
 
 

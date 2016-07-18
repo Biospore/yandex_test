@@ -3,34 +3,30 @@ package biospore.yandex_test;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
-
 /**
  * Created by biospore on 6/17/16.
  */
-public class Note implements Parcelable{
-    
+public class Note implements Parcelable {
+
     private long id;
     private String title;
     private String text;
 
-    public Note(){}
+    public Note() {
+    }
 
-    public Note(int id, String title, String text)
-    {
+    public Note(int id, String title, String text) {
         this.id = id;
         this.title = title;
         this.text = text;
     }
 
-    public Note(String title, String text)
-    {
+    public Note(String title, String text) {
         this.title = title;
         this.text = text;
     }
 
-    private Note(Parcel in)
-    {
+    private Note(Parcel in) {
         id = in.readLong();
         title = in.readString();
         text = in.readString();
@@ -77,8 +73,7 @@ public class Note implements Parcelable{
         dest.writeString(text);
     }
 
-    public static final Parcelable.Creator<Note> CREATOR = new Parcelable.Creator<Note>()
-    {
+    public static final Parcelable.Creator<Note> CREATOR = new Parcelable.Creator<Note>() {
         @Override
         public Note createFromParcel(Parcel source) {
             return new Note(source);

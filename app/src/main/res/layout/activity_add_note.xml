@@ -10,8 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <include layout="@layout/toolbar">
-        </include>
+
+        <include layout="@layout/toolbar"></include>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -19,30 +20,30 @@
             android:orientation="vertical">
 
             <EditText
+                android:id="@+id/title_field"
                 android:layout_width="369dp"
                 android:layout_height="55dp"
                 android:hint="@string/enter_title"
+                android:inputType="textShortMessage"
                 android:textColor="@color/black"
                 android:textColorHint="@color/black"
-                android:transitionName="@string/transition_list_element"
-                android:id="@+id/title_field"
-                android:inputType="textShortMessage" />
+                android:transitionName="@string/transition_list_element" />
 
             <EditText
+                android:id="@+id/text_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/enter_message"
+                android:inputType="textMultiLine"
                 android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:id="@+id/text_field"
-                android:inputType="textMultiLine" />
+                android:textColorHint="@color/black" />
         </LinearLayout>
         <!--<Button-->
-            <!--android:text="@string/done"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:onClick="addNote"-->
-            <!--android:background="@drawable/green_background"-->
-            <!--android:layout_weight="1" />-->
+        <!--android:text="@string/done"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:onClick="addNote"-->
+        <!--android:background="@drawable/green_background"-->
+        <!--android:layout_weight="1" />-->
     </LinearLayout>
 </RelativeLayout>

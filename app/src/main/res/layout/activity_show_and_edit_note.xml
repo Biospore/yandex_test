@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ShowAndEditNoteActivity">
-    <include layout="@layout/toolbar">
-    </include>
+
+    <include layout="@layout/toolbar"></include>
     <!--Text fields-->
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,40 +15,42 @@
         android:orientation="vertical">
 
         <EditText
+            android:id="@+id/title_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/title_field"
-            android:textColor="@color/black"
-            android:inputType="textShortMessage" />
+            android:inputType="textShortMessage"
+            android:textColor="@color/black" />
 
         <EditText
+            android:id="@+id/text_field"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/text_field"
-            android:textColor="@color/black"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:textColor="@color/black" />
 
     </LinearLayout>
     <!--Buttons-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
         <Button
-            android:layout_width="match_parent"
             android:id="@+id/edit"
-            android:layout_weight="1"
-            android:text="@string/edit"
-            android:background="@drawable/yellow_background"
-            android:layout_height="match_parent" />
-        <Button
             android:layout_width="match_parent"
-            android:id="@+id/delete"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/delete"
-            android:onClick="deleteNote"
+            android:background="@drawable/yellow_background"
+            android:text="@string/edit" />
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@drawable/red_background"
-            android:layout_height="match_parent" />
+            android:onClick="deleteNote"
+            android:text="@string/delete" />
     </LinearLayout>
 
 </LinearLayout>

@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    tools:context=".ShowAndEditNoteActivity"
-    android:layout_height="match_parent">
-    <item
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ShowAndEditNoteActivity">
+    <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/edit"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:showAsAction="ifRoom"
         android:icon="@android:drawable/ic_menu_edit"
         android:onClick="onItemClick"
-        android:title="@string/edit" />
-    <item
+        android:title="@string/edit"
+        app:showAsAction="ifRoom" />
+    <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/delete"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:showAsAction="ifRoom"
         android:icon="@android:drawable/ic_delete"
         android:onClick="onItemClick"
-        android:title="@string/delete" />
+        android:title="@string/delete"
+        app:showAsAction="ifRoom" />
 </menu>

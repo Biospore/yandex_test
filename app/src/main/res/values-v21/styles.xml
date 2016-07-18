@@ -13,9 +13,11 @@
         <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
         <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
     </style>
+
     <style name="YandexTestTheme.ActionBar" parent="Theme.AppCompat.NoActionBar">
         <item name="android:background">@color/colorPrimary</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:actionMenuTextColor">@color/white</item>
-    </style>`
+    </style>
+
 </resources>

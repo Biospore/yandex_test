@@ -13,18 +13,13 @@ public class NoteParcelStorage implements Parcelable {
         return notes;
     }
 
-    public void setNotes(ArrayList<Note> notes) {
-        this.notes = notes;
-    }
-
     private ArrayList<Note> notes;
-    public NoteParcelStorage(ArrayList<Note> in)
-    {
+
+    public NoteParcelStorage(ArrayList<Note> in) {
         notes = in;
     }
 
-    protected NoteParcelStorage(Parcel in)
-    {
+    protected NoteParcelStorage(Parcel in) {
         notes = in.readArrayList(Note.class.getClassLoader());
     }
 
@@ -46,8 +41,7 @@ public class NoteParcelStorage implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags)
-    {
+    public void writeToParcel(Parcel dest, int flags) {
         dest.writeList(notes);
     }
 }

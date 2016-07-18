@@ -1,22 +1,21 @@
 package biospore.yandex_test;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Explode;
-import android.util.Log;
+import android.transition.Fade;
+import android.transition.Transition;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import android.support.v4.util.Pair;
 import java.util.List;
 
 //import android.support.v7.widget.View;
@@ -46,11 +45,14 @@ public class MainActivity extends Activity implements CustomClickListener {
             throw new RuntimeException("Adapter is null!");
         }
 
-        Log.i("IDP ID", String.valueOf(note.getId()));
-        Log.i("IDP POS", String.valueOf(position));
+//        Log.i("IDP ID", String.valueOf(note.getId()));
+//        Log.i("IDP POS", String.valueOf(position));
         intent.putExtra(NOTE_ID, String.valueOf(note.getId()));
         intent.putExtra(NOTE_POSITION, String.valueOf(position));
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, v, "title");
+
+        Pair p1 = Pair.create(v, getString(R.string.transition_list_element));
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, p1);
+//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, );
         startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED, options.toBundle());
     }
 
@@ -93,9 +95,12 @@ public class MainActivity extends Activity implements CustomClickListener {
     private void configureTransition()
     {
         Window window = getWindow();
-        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        window.setExitTransition(new Explode());
-        window.setEnterTransition(new Explode());
+//        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        Transition transition = new Fade();
+        transition.addTarget(getString(R.string.transition_list_element));
+
+        window.setExitTransition(transition);
+        window.setEnterTransition(transition);
     }
 
 

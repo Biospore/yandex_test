@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.Explode;
+import android.transition.Transition;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -25,9 +26,11 @@ public class AddNoteActivity extends AppCompatActivity {
     private void configureTransition()
     {
         Window window = getWindow();
-        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        window.setExitTransition(new Explode());
-        window.setEnterTransition(new Explode());
+//        window.requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        Transition transition = new Explode();
+//        transition.addTarget(getString(R.string.transition_title));
+        window.setExitTransition(transition);
+        window.setEnterTransition(transition);
     }
 
     public void addNote(View view) {

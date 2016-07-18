@@ -5,18 +5,21 @@
     android:orientation="horizontal"
     android:layout_height="wrap_content"
     android:clickable="true"
+    android:transitionName="@string/transition_list_element"
     android:background="?android:attr/selectableItemBackground">
 
     <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:src="@mipmap/ic_launcher"
+        android:padding="2dp"
         android:layout_height="wrap_content">
 
     </ImageView>
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
+        android:textSize="@dimen/title_text_size"
         android:id="@+id/text_ya_test_0"
-        android:transitionName="@string/title"
+
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"

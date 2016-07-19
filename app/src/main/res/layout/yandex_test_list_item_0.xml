@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
+    android:transitionName="@string/transition_list_element"
     android:orientation="horizontal">
 
     <ImageView xmlns:android="http://schemas.android.com/apk/res/android"

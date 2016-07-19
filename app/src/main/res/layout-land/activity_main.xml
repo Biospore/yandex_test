@@ -10,7 +10,7 @@
     <GridView
         android:layout_width="match_parent"
         android:layout_weight="15"
-        android:id="@+id/main_view"
+        android:id="@+id/main_recycler_view"
         android:numColumns="2"
         android:layout_height="0dp">
     </GridView>
@@ -18,7 +18,7 @@
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/button_add_note"
+            android:id="@+id/button_add"
             android:background="@color/green"
             android:text="@string/add_note"
             android:onClick="addNote"/>

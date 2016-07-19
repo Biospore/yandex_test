@@ -5,14 +5,12 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:orientation="horizontal"
-    android:transitionName="@string/transition_list_element">
+    android:orientation="horizontal">
 
     <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/image_desc"
-        android:padding="2dp"
         android:src="@mipmap/ic_launcher">
 
     </ImageView>

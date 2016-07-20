@@ -8,7 +8,6 @@
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/button_save"
         android:icon="@android:drawable/ic_menu_add"
-        android:onClick="onMenuItemClick"
         android:title="@string/add_note"
         app:showAsAction="always" />
 

@@ -1,15 +1,12 @@
 package biospore.yandex_test;
 
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
-import android.transition.Explode;
-import android.transition.Transition;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,12 +28,6 @@ public class EditNoteFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
 
-    public static final int DELETE = 1;
-    public static final int CHANGED = 2;
-    public static final String NOTE_CHANGE = "change_note";
-    public static final String NOTE_CHANGE_POSITION = "changed_note_position";
-    public static final String NOTE_DELETED = "delete_note";
-    Intent intent;
     Note note;
     EditText titleField;
     EditText textField;
@@ -49,10 +40,32 @@ public class EditNoteFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static EditNoteFragment newInstance(long id, int position) {
+        EditNoteFragment fragment = new EditNoteFragment();
+        Bundle args = new Bundle();
+        args.putLong(NoteListFragment.NOTE_ID, id);
+        args.putInt(NoteListFragment.NOTE_POSITION, position);
+        args.putInt(MainFragmentActivity.MENU_TYPE, MainFragmentActivity.EDIT_NOTE);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static EditNoteFragment newInstance() {
+        EditNoteFragment fragment = new EditNoteFragment();
+        Bundle args = new Bundle();
+        args.putInt(MainFragmentActivity.MENU_TYPE, MainFragmentActivity.ADD_NOTE);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public Note getNote() {
+        return note;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = new NoteDatabaseHelper(getActivity());
+        db = new NoteDatabaseHelper(getActivity().getApplicationContext());
         Bundle bundle = this.getArguments();
         int menuType = bundle.getInt(MainFragmentActivity.MENU_TYPE);
         switch (menuType) {
@@ -65,62 +78,90 @@ public class EditNoteFragment extends Fragment {
                 menuId = R.menu.show_and_edit_activity_menu;
                 long nodeId = bundle.getLong(NoteListFragment.NOTE_ID);
                 position = bundle.getInt(NoteListFragment.NOTE_POSITION);
-//                Log.i("ID RECEIVED", String.valueOf(nodeId));
                 note = db.getNoteById(nodeId);
                 editEnabled = false;
                 break;
         }
-//        Transition transition = new Explode();
-//        transition.addTarget(getString(R.string.transition_list_element));
-//        setSharedElementEnterTransition(transition);
-//        setExitTransition(transition);
-//        setSharedElementReturnTransition(transition);
-//        setEnterTransition(transition);
+    }
+
+    public int getPosition() {
+        return position;
     }
 
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        MainFragmentActivity activity = ((MainFragmentActivity) getActivity());
+        NoteListFragment listFragment = activity.listFragment;
+        switch (item.getItemId()) {
+            case R.id.button_delete:
+                listFragment.deleteNoteFromAdapter(this.getPosition());
+                this.deleteNote();
+                getFragmentManager().popBackStack();
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, listFragment, MainFragmentActivity.LIST_FRAGMENT_TAG)
+                        .commit();
+                break;
+            case R.id.button_edit:
+                this.changeEditFlag();
+                item.setOnMenuItemClickListener(this.getSaveAfterEditListener());
+                Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar_test);
+                if (toolbar != null) {
+                    toolbar
+                            .getMenu()
+                            .findItem(R.id.button_delete)
+                            .setVisible(false);
+                }
+                break;
+            case R.id.button_save:
+                this.addNote();
+                getFragmentManager().popBackStack();
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, listFragment, MainFragmentActivity.LIST_FRAGMENT_TAG)
+                        .commit();
+                listFragment.addNoteToAdapter(this.getNote());
+
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_edit_note, container, false);
-//        view.findViewById(R.id.line_lay).setTransitionName(String.valueOf(note.getId()));
         if (!editEnabled) {
             ViewCompat.setTransitionName(view.findViewById(R.id.line_lay), String.valueOf(note.getId()));
-            Log.i("GG", view.findViewById(R.id.line_lay).getTransitionName());
         }
         return view;
     }
 
 
     public void deleteNote() {
-        Intent result = new Intent();
-        result.putExtra(NOTE_DELETED, position);
-//        setResult(DELETE, result);
         db.deleteNote(note);
         db.close();
-//        finish();
     }
 
     public void addNote() {
         if (titleField != null && textField != null) {
-            Note new_note = new Note(
+            note = new Note(
                     titleField.getText().toString(),
                     textField.getText().toString());
-            db.addNote(new_note);
-
-            Intent result = new Intent();
-//            result.putExtra(NEW_NOTE, new_note);
-//            setResult(OK, result);
-
+            db.addNote(note);
+            Log.i("ID", String.valueOf(note.getId()));
         } else {
-//            setResult(ERROR);
             throw (new RuntimeException("Null title or text"));
         }
         db.close();
-//        finishAfterTransition();
     }
 
     public void changeEditFlag() {
@@ -134,28 +175,15 @@ public class EditNoteFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 note.setTitle(titleField.getText().toString());
                 note.setText(textField.getText().toString());
-                Intent result = new Intent();
-                result.putExtra(NOTE_CHANGE, note);
-                result.putExtra(NOTE_CHANGE_POSITION, position);
-//                setResult(CHANGED, result);
                 db.updateNote(note);
-//                Log.i("FF", "fff");
-
-
                 db.close();
-//                getFragmentManager()
-//                        .beginTransaction()
-//                        .hide(getActivity()
-//                                .getFragmentManager()
-//                                .findFragmentByTag(MainFragmentActivity.EDIT_FRAGMENT_TAG))
-//                        .commit();
+                NoteListFragment listFragment = ((MainFragmentActivity) getActivity()).listFragment;
+                getFragmentManager().popBackStack();
                 getFragmentManager()
                         .beginTransaction()
-//                        .addSharedElement(getView(), getString(R.string.transition_list_element))
-//                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(R.id.fragment_container, new NoteListFragment(), MainFragmentActivity.LIST_FRAGMENT_TAG)
+                        .replace(R.id.fragment_container, listFragment, MainFragmentActivity.LIST_FRAGMENT_TAG)
                         .commit();
-//                finishAfterTransition();
+                listFragment.updateNoteOnAdapter(note, position);
                 return false;
             }
         };
@@ -168,8 +196,6 @@ public class EditNoteFragment extends Fragment {
         textField = (EditText) view.findViewById(R.id.text_field);
 
         if (!editEnabled) {
-//            view.findViewById(R.id.line_lay).setTransitionName(String.valueOf(position));
-//            Log.i("hhh", String.valueOf(position))
             if (note.getTitle().isEmpty()) {
                 titleField.setHint(R.string.empty_title);
             } else {
@@ -199,8 +225,6 @@ public class EditNoteFragment extends Fragment {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
             mListener = new OnFragmentInteractionListener() {
                 @Override
                 public void onFragmentInteraction(Uri uri) {
@@ -238,5 +262,11 @@ public class EditNoteFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
     }
 }

@@ -1,24 +1,19 @@
 package biospore.yandex_test;
 
-import android.app.FragmentTransaction;
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Explode;
-import android.transition.Slide;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
 import android.util.Log;
-import android.app.Fragment;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -34,7 +29,6 @@ import java.util.ArrayList;
  */
 public class NoteListFragment extends Fragment implements CustomClickListener {
 
-    private RecyclerView mainView;
     private static String NOTES_BUNDLE_VALUE = "notes";
     private Point size;
     private WeakReference<EvenOddAdapter> tAdapter;
@@ -54,28 +48,48 @@ public class NoteListFragment extends Fragment implements CustomClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Transition transition = new Explode();
-//        transition.addTarget(getString(R.string.transition_list_element));
-//        setExitTransition(transition);
-//        setSharedElementReturnTransition(transition);
-//        setSharedElementEnterTransition(transition);
-//        setEnterTransition(transition);
+        db = new NoteDatabaseHelper(getActivity().getApplicationContext());
+
+        final EvenOddAdapter adapter = new EvenOddAdapter();
+        adapter.setOnItemClickListener(new WeakReference<CustomClickListener>(this));
+        tAdapter = new WeakReference<>(adapter);
+        if (savedInstanceState != null) {
+            NoteParcelStorage storage = (NoteParcelStorage) savedInstanceState.get(NOTES_BUNDLE_VALUE);
+            if (storage != null) {
+                fillAdapter(storage.getNotes());
+            }
+        } else {
+            ArrayList<Note> notes = db.getAllNotes();
+            fillAdapter(notes);
+        }
+
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-//        MenuInflater inflater = getMenuInflater();
+        menu.clear();
         inflater.inflate(R.menu.main_activity_menu, menu);
-//        return true;
     }
 
-    /*
     @Override
-    public void onStart() {
-        super.onStart();
-        Log.i("START", "sss");
-    }*/
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.button_add:
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, EditNoteFragment.newInstance(), MainFragmentActivity.EDIT_FRAGMENT_TAG)
+                        .addToBackStack(MainFragmentActivity.EDIT_BACK_STACK_NAME)
+                        .commit();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -85,7 +99,6 @@ public class NoteListFragment extends Fragment implements CustomClickListener {
     private void fillAdapter(ArrayList<Note> notes) {
         EvenOddAdapter adapter = getViewAdapter();
         adapter.clear();
-//        MainActivity.notes.clear();
         for (Note note : notes) {
             if (note.getTitle().isEmpty())
                 note.setTitle(getString(R.string.empty_title));
@@ -94,35 +107,44 @@ public class NoteListFragment extends Fragment implements CustomClickListener {
     }
 
 
+    public void addNoteToAdapter(Note note) {
+        EvenOddAdapter adapter = getViewAdapter();
+        if (note.getTitle().isEmpty())
+            note.setTitle(getString(R.string.empty_title));
+        adapter.add(note);
+    }
+
+    public void updateNoteOnAdapter(Note note, int position) {
+        EvenOddAdapter adapter = getViewAdapter();
+        if (note.getTitle().isEmpty()) {
+            note.setTitle(getString(R.string.empty_title));
+        }
+        adapter.remove(adapter.getItem(position));
+        adapter.insert(note, position);
+    }
+
+    public void deleteNoteFromAdapter(int position) {
+        EvenOddAdapter adapter = getViewAdapter();
+        adapter.remove(adapter.getItem(position));
+    }
+
+
     private void initializeRecyclerView(View view, Bundle savedInstance) {
 
-        db = new NoteDatabaseHelper(view.getContext());
-        mainView = (RecyclerView) view.findViewById(R.id.main_recycler_view);
-//        Log.i("REC", view.toString());
-        final EvenOddAdapter adapter = new EvenOddAdapter();
-        tAdapter = new WeakReference<EvenOddAdapter>(adapter);
-        adapter.setOnItemClickListener(new WeakReference<CustomClickListener>(this));
-        mainView.setAdapter(adapter);
+
+        RecyclerView mainView = (RecyclerView) view.findViewById(R.id.main_recycler_view);
+        mainView.setAdapter(tAdapter.get());
         GridLayoutManager layoutManager = new GridLayoutManager(
                 view.getContext(),
                 2);
         layoutManager.setSpanSizeLookup(getSpanSize());
         mainView.setLayoutManager(layoutManager);
 
-        if (savedInstance != null) {
-            NoteParcelStorage storage = (NoteParcelStorage) savedInstance.get(NOTES_BUNDLE_VALUE);
-            if (storage != null) {
-                fillAdapter(storage.getNotes());
-            }
-        } else {
-            ArrayList<Note> notes = db.getAllNotes();
-            fillAdapter(notes);
-        }
+
     }
 
 
     private GridLayoutManager.SpanSizeLookup getSpanSize() {
-//        activity = new WeakReference<>((MainFragmentActivity) getActivity());
         final Display display = getActivity().getWindowManager().getDefaultDisplay();
         return new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -146,7 +168,6 @@ public class NoteListFragment extends Fragment implements CustomClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_note_list, container, false);
     }
@@ -171,8 +192,6 @@ public class NoteListFragment extends Fragment implements CustomClickListener {
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
             mListener = new OnFragmentInteractionListener() {
                 @Override
                 public void onFragmentInteraction(Uri uri) {
@@ -191,9 +210,6 @@ public class NoteListFragment extends Fragment implements CustomClickListener {
 
     @Override
     public void onItemClick(View v, int position) {
-
-        EditNoteFragment editFragment = new EditNoteFragment();
-        Bundle bundle = new Bundle();
         long id = 0;
         if (tAdapter.get() != null) {
             id = tAdapter
@@ -201,31 +217,13 @@ public class NoteListFragment extends Fragment implements CustomClickListener {
                     .getItemId(position);
         }
 
-        bundle.putLong(NOTE_ID, id);
-        bundle.putInt(NOTE_POSITION, position);
-        bundle.putInt(MainFragmentActivity.MENU_TYPE, MainFragmentActivity.EDIT_NOTE);
-        editFragment.setArguments(bundle);
-        Transition transition = new Slide();
-//        Transition transition1 = TransitionInflater.from(v.getContext()).inflateTransition(android.R.transition.explode);
-//        v.setTransitionName(String.valueOf(position));
-        transition.addTarget(v.getTransitionName());
-//        transition.addTarget(getString(R.string.transition_list_element));
-//        editFragment.setSharedElementEnterTransition(transition1);
-
-//        editFragment.setEnterTransition(new Explode());
-        editFragment.setSharedElementEnterTransition(transition);
-        editFragment.setAllowEnterTransitionOverlap(true);
-//        setExitTransition(new Explode());
-
-//        editFragment.setReenterTransition(transition1);
-//        Log.i("VIEW", v.toString());
-        Log.i("fff", v.getTransitionName());
         getFragmentManager()
                 .beginTransaction()
                 .addSharedElement(v, v.getTransitionName())
-                .replace(R.id.fragment_container, editFragment, MainFragmentActivity.EDIT_FRAGMENT_TAG)
-                .commit();
 
+                .replace(R.id.fragment_container, EditNoteFragment.newInstance(id, position), MainFragmentActivity.EDIT_FRAGMENT_TAG)
+                .addToBackStack(MainFragmentActivity.EDIT_BACK_STACK_NAME)
+                .commit();
     }
 
     /**
@@ -243,9 +241,10 @@ public class NoteListFragment extends Fragment implements CustomClickListener {
         void onFragmentInteraction(Uri uri);
     }
 
-    private EvenOddAdapter getViewAdapter() {
-        return (EvenOddAdapter) mainView.getAdapter();
+    public EvenOddAdapter getViewAdapter() {
+        return tAdapter.get();
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

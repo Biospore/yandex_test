@@ -87,8 +87,10 @@ public class EditNoteFragment extends Fragment {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_edit_note, container, false);
 //        view.findViewById(R.id.line_lay).setTransitionName(String.valueOf(note.getId()));
-        ViewCompat.setTransitionName(view.findViewById(R.id.line_lay), String.valueOf(note.getId()));
-        Log.i("GG", view.findViewById(R.id.line_lay).getTransitionName());
+        if (!editEnabled) {
+            ViewCompat.setTransitionName(view.findViewById(R.id.line_lay), String.valueOf(note.getId()));
+            Log.i("GG", view.findViewById(R.id.line_lay).getTransitionName());
+        }
         return view;
     }
 
@@ -222,6 +224,7 @@ public class EditNoteFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

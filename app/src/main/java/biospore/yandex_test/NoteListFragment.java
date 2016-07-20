@@ -10,6 +10,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Explode;
+import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.util.Log;
@@ -204,22 +205,22 @@ public class NoteListFragment extends Fragment implements CustomClickListener {
         bundle.putInt(NOTE_POSITION, position);
         bundle.putInt(MainFragmentActivity.MENU_TYPE, MainFragmentActivity.EDIT_NOTE);
         editFragment.setArguments(bundle);
-        Transition transition = new Explode();
+        Transition transition = new Slide();
 //        Transition transition1 = TransitionInflater.from(v.getContext()).inflateTransition(android.R.transition.explode);
 //        v.setTransitionName(String.valueOf(position));
         transition.addTarget(v.getTransitionName());
 //        transition.addTarget(getString(R.string.transition_list_element));
 //        editFragment.setSharedElementEnterTransition(transition1);
 
-
-        editFragment.setEnterTransition(transition);
+//        editFragment.setEnterTransition(new Explode());
         editFragment.setSharedElementEnterTransition(transition);
+        editFragment.setAllowEnterTransitionOverlap(true);
+//        setExitTransition(new Explode());
 
 //        editFragment.setReenterTransition(transition1);
 //        Log.i("VIEW", v.toString());
         Log.i("fff", v.getTransitionName());
-        getActivity()
-                .getFragmentManager()
+        getFragmentManager()
                 .beginTransaction()
                 .addSharedElement(v, v.getTransitionName())
                 .replace(R.id.fragment_container, editFragment, MainFragmentActivity.EDIT_FRAGMENT_TAG)

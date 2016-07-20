@@ -1,9 +1,11 @@
 package biospore.yandex_test;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.Window;
 
 public class MainFragmentActivity extends AppCompatActivity {
 
@@ -17,13 +19,14 @@ public class MainFragmentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(R.layout.activity_main_fragment);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_test);
         setSupportActionBar(toolbar);
         NoteListFragment listFragment = new NoteListFragment();
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, listFragment, LIST_FRAGMENT_TAG)
+                .add(R.id.fragment_container, listFragment, LIST_FRAGMENT_TAG)
                 .commit();
     }
 

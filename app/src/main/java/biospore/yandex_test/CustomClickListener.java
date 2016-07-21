@@ -7,5 +7,5 @@ package biospore.yandex_test;
 import android.view.View;
 
 public interface CustomClickListener {
-    public void onItemClick(View v, int position);
+    void onItemClick(View v, int position);
 }

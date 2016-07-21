@@ -6,9 +6,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by biospore on 6/17/16.
@@ -37,6 +37,7 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
                 KEY_TITLE + " text," +
                 KEY_TEXT + " text)";
         db.execSQL(createTable);
+        db.close();
     }
 
     @Override
@@ -45,19 +46,20 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    void addNote(Note note)
-    {
+    void addNote(Note note) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, note.getTitle());
         values.put(KEY_TEXT, note.getText());
-        db.insert(TABLE_NAME, null, values);
+        long id = db.insert(TABLE_NAME, null, values);
+        Log.i("DB id from insert", String.valueOf(id));
+        note.setId(id);
         db.close();
     }
 
-    Note getNoteById(int id)
-    {
+    Note getNoteById(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
+        Log.i("DB query id", String.valueOf(id));
         @SuppressLint("Recycle") Cursor cursor = db.query(
                 TABLE_NAME,
                 new String[]{
@@ -71,26 +73,25 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
                 null,
                 null
         );
-        if (cursor != null)
-        {
+        if (cursor != null) {
             cursor.moveToFirst();
-            return new Note (
+            Note new_note = new Note(
                     Integer.parseInt(cursor.getString(0)),
                     cursor.getString(1),
                     cursor.getString(2)
-                    );
+            );
+            cursor.close();
+            return new_note;
         }
         return null;
     }
 
-    ArrayList<Note> getAllNotes()
-    {
+    ArrayList<Note> getAllNotes() {
         ArrayList<Note> notes = new ArrayList<Note>();
         String selectQuery = "select * from " + TABLE_NAME;
         SQLiteDatabase db = this.getWritableDatabase();
         @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
-        if (cursor.moveToFirst())
-        {
+        if (cursor != null && cursor.moveToFirst()) {
             do {
                 Note note = new Note();
                 note.setId(Integer.parseInt(cursor.getString(0)));
@@ -98,12 +99,12 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
                 note.setText(cursor.getString(2));
                 notes.add(note);
             } while (cursor.moveToNext());
+            cursor.close();
         }
         return notes;
     }
 
-    int updateNote(Note note)
-    {
+    int updateNote(Note note) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_TITLE, note.getTitle());
@@ -112,16 +113,16 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
                 TABLE_NAME,
                 values,
                 KEY_ID + " =? ",
-                new String[] {String.valueOf(note.getId())}
+                new String[]{String.valueOf(note.getId())}
         );
     }
-    void deleteNote(Note note)
-    {
+
+    void deleteNote(Note note) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(
                 TABLE_NAME,
                 KEY_ID + " =? ",
-                new String[] {String.valueOf(note.getId())}
+                new String[]{String.valueOf(note.getId())}
         );
         db.close();
     }

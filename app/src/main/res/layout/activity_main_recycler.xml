@@ -1,25 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="biospore.yandex_test.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="biospore.yandex_test.MainActivity">
 
-<android.support.v7.widget.RecyclerView
-    android:layout_width="match_parent"
-    android:id="@+id/main_view"
-    android:layout_weight="1"
-    android:layout_height="wrap_content">
-</android.support.v7.widget.RecyclerView>
+    <include layout="@layout/toolbar" />
 
-    <Button
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/main_view"
         android:layout_width="match_parent"
-        android:layout_weight="0"
-        android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:background="@color/green"
-        android:text="@string/add_note"
-        android:onClick="addNote"/>
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 </LinearLayout>

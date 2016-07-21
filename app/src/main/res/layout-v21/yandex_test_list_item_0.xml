@@ -5,11 +5,14 @@
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:transitionName="@string/transition_list_element">
 
     <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/image_desc"
+        android:padding="2dp"
         android:src="@mipmap/ic_launcher">
 
     </ImageView>
@@ -18,9 +21,11 @@
         android:id="@+id/text_ya_test_0"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+
         android:gravity="center_vertical"
         android:minHeight="?android:attr/listPreferredItemHeightSmall"
-        android:textAppearance="?android:attr/textAppearanceListItemSmall" />
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textSize="@dimen/title_text_size" />
 </LinearLayout>
 
 

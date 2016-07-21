@@ -1,6 +1,5 @@
 package biospore.yandex_test;
 
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,20 +13,10 @@ import java.util.List;
 /**
  * Created by hsxrjd on 13.07.16.
  */
-//public class EvenOddAdapter<T> extends BaseAdapter {
 public class EvenOddAdapter<T> extends RecyclerView.Adapter<EvenOddAdapter.EvenOddViewHolder> {
-    /* TODO
-    * Пока без синхронизации - для нее (обычно) используется Object
-    * Нужно для функций обращающихся к данным
-    * */
-    private List<T> tObjects;
-    //    private AdapterView.OnItemClickListener mListener;
-//    private CustomClickListener tListener;
-    private WeakReference<CustomClickListener> tListener;
 
-    public EvenOddAdapter(@NonNull List<T> objects) {
-        tObjects = objects;
-    }
+    private List<T> tObjects;
+    private WeakReference<CustomClickListener> tListener;
 
     public EvenOddAdapter() {
         tObjects = new ArrayList<>();
@@ -86,7 +75,6 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter<EvenOddAdapter.EvenO
 
     public static class EvenOddViewHolder extends RecyclerView.ViewHolder {
         TextView textViewItem;
-        //        CustomClickListener tListener;
         WeakReference<CustomClickListener> tListener;
 
         public void setOnItemClickListener(WeakReference<CustomClickListener> listener) {
@@ -100,10 +88,11 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter<EvenOddAdapter.EvenO
                 @Override
                 public void onClick(View v) {
                     CustomClickListener listener = tListener.get();
-                    if (listener != null){
-                        listener.onItemClick(v, getAdapterPosition());}
-                    else{
-                        throw new RuntimeException("Listener is null!");}
+                    if (listener != null) {
+                        listener.onItemClick(v, getAdapterPosition());
+                    } else {
+                        throw new RuntimeException("Listener is null!");
+                    }
                 }
             });
         }

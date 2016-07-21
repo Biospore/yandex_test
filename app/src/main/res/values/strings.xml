@@ -9,4 +9,6 @@
     <string name="done">Done</string>
     <string name="empty_title">&lt;no subject&gt;</string>
     <string name="empty_text"><![CDATA[<no text>]]></string>
+    <string name="transition_list_element" translatable="false">title</string>
+    <string name="image_desc">Image description placeholder</string>
 </resources>

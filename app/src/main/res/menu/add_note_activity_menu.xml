@@ -4,11 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AddNoteActivity">
+    tools:context=".MainFragmentActivity">
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/button_add_note"
+        android:id="@+id/button_save"
         android:icon="@android:drawable/ic_menu_add"
-        android:onClick="onItemClick"
         android:title="@string/add_note"
         app:showAsAction="always" />
 

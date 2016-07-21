@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
         configureTransition();
         db = new NoteDatabaseHelper(this);
         setContentView(R.layout.activity_main_recycler);
-        mainView = (RecyclerView) findViewById(R.id.main_view);
+        mainView = (RecyclerView) findViewById(R.id.main_recycler_view);
         final EvenOddAdapter adapter = new EvenOddAdapter();
         adapter.setOnItemClickListener(new WeakReference<CustomClickListener>(this));
 
@@ -114,9 +114,7 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
                     return ((position + 1) % 3 == 0) ? 2 : 1;
                 }
             }
-        }
-
-                ;
+        };
     }
 
     private void addNoteToAdapter(Note note) {
@@ -223,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
 
     public void onItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.button_add_note:
+            case R.id.button_add:
                 Intent intent = new Intent(this, AddNoteActivity.class);
                 Pair p1 = Pair.create(mainView, getString(R.string.transition_list_element));
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, p1);
@@ -232,4 +230,7 @@ public class MainActivity extends AppCompatActivity implements CustomClickListen
 
         }
     }
+
+
+
 }

@@ -19,6 +19,9 @@ public class ShowAndEditNoteActivity extends AppCompatActivity {
     public static final String NOTE_CHANGE = "change_note";
     public static final String NOTE_CHANGE_POSITION = "changed_note_position";
     public static final String NOTE_DELETED = "delete_note";
+    public static final int OK = 0;
+    public static final int ERROR = 1;
+    public static final String NEW_NOTE = "new_note";
     Intent intent;
     Note note;
     NoteDatabaseHelper db;
@@ -85,7 +88,7 @@ public class ShowAndEditNoteActivity extends AppCompatActivity {
 
     public void onItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.edit:
+            case R.id.button_edit:
                 item.setTitle(R.string.save);
                 titleField.setEnabled(true);
                 textField.setEnabled(true);
@@ -109,10 +112,10 @@ public class ShowAndEditNoteActivity extends AppCompatActivity {
                 });
                 Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_test);
                 if (toolbar != null) {
-                    toolbar.getMenu().findItem(R.id.delete).setVisible(false);
+                    toolbar.getMenu().findItem(R.id.button_delete).setVisible(false);
                 }
                 break;
-            case R.id.delete:
+            case R.id.button_delete:
                 Intent result = new Intent();
                 result.putExtra(NOTE_DELETED, position);
                 setResult(DELETE, result);

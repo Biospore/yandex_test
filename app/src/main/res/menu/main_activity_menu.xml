@@ -6,11 +6,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".MainFragmentActivity">
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/button_add_note"
+        android:id="@+id/button_add"
         android:icon="@android:drawable/ic_menu_add"
-        android:onClick="onItemClick"
         android:title="@string/add_note"
         app:showAsAction="ifRoom" />
 

@@ -13,6 +13,10 @@ public class Note implements Parcelable {
     private String text;
 
     public Note() {
+        id = 0;
+        title = "";
+        text = "";
+
     }
 
     public Note(int id, String title, String text) {

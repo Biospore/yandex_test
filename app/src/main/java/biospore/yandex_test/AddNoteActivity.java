@@ -60,7 +60,7 @@ public class AddNoteActivity extends AppCompatActivity {
 
     public void onItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.button_add_note:
+            case R.id.button_add:
                 NoteDatabaseHelper db = new NoteDatabaseHelper(this);
                 EditText title = (EditText) findViewById(R.id.title_field);
                 EditText text = (EditText) findViewById(R.id.text_field);

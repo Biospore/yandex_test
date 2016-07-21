@@ -13,7 +13,7 @@
 
 
     <ListView
-        android:id="@+id/main_view"
+        android:id="@+id/main_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="15">
@@ -21,7 +21,7 @@
     </ListView>
 
     <Button
-        android:id="@+id/button_add_note"
+        android:id="@+id/button_add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"

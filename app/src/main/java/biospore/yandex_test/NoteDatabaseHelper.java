@@ -52,14 +52,14 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_TITLE, note.getTitle());
         values.put(KEY_TEXT, note.getText());
         long id = db.insert(TABLE_NAME, null, values);
-        Log.i("DB id from insert", String.valueOf(id));
+//        Log.i("DB id from insert", String.valueOf(id));
         note.setId(id);
         db.close();
     }
 
     Note getNoteById(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Log.i("DB query id", String.valueOf(id));
+//        Log.i("DB query id", String.valueOf(id));
         @SuppressLint("Recycle") Cursor cursor = db.query(
                 TABLE_NAME,
                 new String[]{
@@ -81,8 +81,10 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(2)
             );
             cursor.close();
+            db.close();
             return new_note;
         }
+        db.close();
         return null;
     }
 
@@ -101,6 +103,7 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
             cursor.close();
         }
+        db.close();
         return notes;
     }
 

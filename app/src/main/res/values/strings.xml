@@ -11,4 +11,7 @@
     <string name="empty_text"><![CDATA[<no text>]]></string>
     <string name="transition_list_element" translatable="false">title</string>
     <string name="image_desc">Image description placeholder</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

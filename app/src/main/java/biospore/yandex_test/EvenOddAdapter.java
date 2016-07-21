@@ -1,6 +1,8 @@
 package biospore.yandex_test;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +55,7 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter<EvenOddAdapter.EvenO
     @Override
     public EvenOddViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.yandex_test_list_item_0, parent, false);
+//        Log.i("ITEM", item.getTag().toString());
         EvenOddViewHolder holder = new EvenOddViewHolder(item);
         holder.setOnItemClickListener(tListener);
         return holder;
@@ -60,12 +63,14 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter<EvenOddAdapter.EvenO
 
     @Override
     public void onBindViewHolder(EvenOddViewHolder holder, int position) {
-        holder.textViewItem.setText(tObjects.get(position).toString());
+        T item = tObjects.get(position);
+        ViewCompat.setTransitionName(holder.item, String.valueOf(((Note) item).getId()));
+        holder.textViewItem.setText(item.toString());
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return ((Note)tObjects.get(position)).getId();
     }
 
     @Override
@@ -75,6 +80,7 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter<EvenOddAdapter.EvenO
 
     public static class EvenOddViewHolder extends RecyclerView.ViewHolder {
         TextView textViewItem;
+        View item;
         WeakReference<CustomClickListener> tListener;
 
         public void setOnItemClickListener(WeakReference<CustomClickListener> listener) {
@@ -83,6 +89,7 @@ public class EvenOddAdapter<T> extends RecyclerView.Adapter<EvenOddAdapter.EvenO
 
         public EvenOddViewHolder(final View itemView) {
             super(itemView);
+            item = itemView;
             textViewItem = (TextView) itemView.findViewById(R.id.text_ya_test_0);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

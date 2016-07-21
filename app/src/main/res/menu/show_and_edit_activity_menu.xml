@@ -4,17 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ShowAndEditNoteActivity">
+    tools:context=".MainFragmentActivity">
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/edit"
+        android:id="@+id/button_edit"
         android:icon="@android:drawable/ic_menu_edit"
-        android:onClick="onItemClick"
         android:title="@string/edit"
         app:showAsAction="ifRoom" />
     <item xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/delete"
+        android:id="@+id/button_delete"
         android:icon="@android:drawable/ic_delete"
-        android:onClick="onItemClick"
         android:title="@string/delete"
         app:showAsAction="ifRoom" />
 </menu>

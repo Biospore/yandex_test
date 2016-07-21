@@ -1,21 +1,26 @@
 package biospore.yandex_test;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Point;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Display;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+//import android.support.v7.widget.View;
 
-    private ListView listView;
+public class MainActivity extends Activity implements CustomClickListener {
+
+    private RecyclerView mainView;
     private static String NOTES_BUNDLE_VALUE = "notes";
-    private static ArrayList<String> titles = new ArrayList<String>();
+    private static List<Note> notes = new ArrayList<>();
+    private WeakReference<EvenOddAdapter> tAdapter;
     NoteDatabaseHelper db;
 
     public static final String NOTE_ID = "biospore.yandex_test.NOTE_ID";
@@ -23,98 +28,115 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main);
-        Log.i("Bundle Resume", "oncreate");
-
-        db = new NoteDatabaseHelper(this);
-        listView = (ListView) findViewById(R.id.list_view);
-
-        createAdapter();
-
-        if (savedInstanceState != null)
-        {
-            Log.i("Debug Bundle Resume", "instance is not null");
-
-
-            NoteParcelStorage storage = (NoteParcelStorage) savedInstanceState.get(NOTES_BUNDLE_VALUE);
-            if (storage != null) {
-                Log.i("Debug Bundle Resume", "storage is not null");
-
-                fillArrayAdapter(storage.getNotes());
-            }
+    public void onItemClick(View v, int position) {
+        Intent intent = new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
+        EvenOddAdapter adapter = tAdapter.get();
+        Note note;
+        if (adapter != null) {
+            note = (Note) adapter.getItem(position);
+        } else {
+            throw new RuntimeException("Adapter is null!");
         }
-        else
-        {
-            ArrayList<Note> notes = db.getAllNotes();
-            fillArrayAdapter(notes);
-        }
+
+        intent.putExtra(NOTE_ID, String.valueOf(note.getId()));
+        intent.putExtra(NOTE_POSITION, String.valueOf(position));
+        startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        db = new NoteDatabaseHelper(this);
+        setContentView(R.layout.activity_main_recycler);
+        mainView = (RecyclerView) findViewById(R.id.main_view);
+        final EvenOddAdapter adapter = new EvenOddAdapter();
+        adapter.setOnItemClickListener(new WeakReference<CustomClickListener>(this));
 
-    }
-
-    private void createAdapter() {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+        mainView.setAdapter(adapter);
+        tAdapter = new WeakReference<EvenOddAdapter>(adapter);
+        EvenOddLayoutManager layoutManager = new EvenOddLayoutManager(
                 this,
-                android.R.layout.simple_list_item_1,
-                titles
-        );
+                2);
+        layoutManager.setSpanSizeLookup(getSpanSize());
+        mainView.setLayoutManager(layoutManager);
 
-        listView.setAdapter(adapter);
+        if (savedInstanceState != null) {
+            NoteParcelStorage storage = (NoteParcelStorage) savedInstanceState.get(NOTES_BUNDLE_VALUE);
+            if (storage != null) {
+                fillAdapter(storage.getNotes());
+            }
+        } else {
+            ArrayList<Note> notes = db.getAllNotes();
+            fillAdapter(notes);
+        }
     }
 
-    private void addNoteToAdapter(Note note)
-    {
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+
+    private GridLayoutManager.SpanSizeLookup getSpanSize() {
+        final Display display = this.getWindowManager().getDefaultDisplay();
+        return new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                /*
+                * Возвращаемое значение - количество занимаемых элементом столбцов
+                * */
+
+//              getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                Point size = new Point();
+                display.getSize(size);
+                if (size.x <= size.y) {
+                    return 2;
+                } else {
+                    if (position == 0)
+                        return 1;
+                    return ((position + 1) % 3 == 0) ? 2 : 1;
+                }
+            }
+        };
+    }
+
+    /* TODO
+    *  переписать все на recycler view
+    *  все должно выглядеть также
+    *  одна xml на landscape и portrait
+    * */
+    private void addNoteToAdapter(Note note) {
+        EvenOddAdapter adapter = getViewAdapter();
         if (note.getTitle().isEmpty())
             note.setTitle(getString(R.string.empty_title));
             /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
         adapter.add(note);
     }
 
-    private void deleteNoteFromAdapter(int position)
-    {
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+
+    private EvenOddAdapter getViewAdapter() {
+
+        return (EvenOddAdapter) mainView.getAdapter();
+
+    }
+
+    private void deleteNoteFromAdapter(int position) {
+        EvenOddAdapter adapter = getViewAdapter();
+
         adapter.remove(adapter.getItem(position));
     }
 
-    private void updateNoteOnAdapter(int position, Note note)
-    {
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+    private void updateNoteOnAdapter(int position, Note note) {
+        EvenOddAdapter adapter = getViewAdapter();
         adapter.remove(adapter.getItem(position));
         adapter.insert(note, position);
     }
 
-    private void fillArrayAdapter(ArrayList<Note> notes) {
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
-
+    private void fillAdapter(ArrayList<Note> notes) {
+        EvenOddAdapter adapter = getViewAdapter();
         adapter.clear();
-        titles.clear();
-        ((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
+        MainActivity.notes.clear();
         for (Note n : notes) {
             if (n.getTitle().isEmpty())
                 n.setTitle(getString(R.string.empty_title));
             /*У класса Note вызывается метод toString(), так что все должно быть OK.*/
             adapter.add(n);
         }
-        listView.setOnItemClickListener(
-                new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Intent intent = new Intent(MainActivity.this, ShowAndEditNoteActivity.class);
-                        Note n = (Note) parent.getItemAtPosition(position);
-                        intent.putExtra(NOTE_ID, String.valueOf(n.getId()));
-                        intent.putExtra(NOTE_POSITION, String.valueOf(position));
-                        Log.i("Debug Button", "clicked");
-                        startActivityForResult(intent, ShowAndEditNoteActivity.DELETE | ShowAndEditNoteActivity.CHANGED);
-                    }
-                });
     }
 
     public void addNote(View view) {
@@ -153,15 +175,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        ArrayAdapter adapter = (ArrayAdapter) listView.getAdapter();
+        EvenOddAdapter adapter = (EvenOddAdapter) getViewAdapter();
         ArrayList<Note> notes = new ArrayList<Note>();
-        int count = adapter.getCount();
-        for (int i = 0; i < count; i++)
-        {
+        int count = adapter.getItemCount();
+        for (int i = 0; i < count; i++) {
             notes.add((Note) adapter.getItem(i));
         }
         NoteParcelStorage storage = new NoteParcelStorage(notes);
-        Log.i("Debug Bundle Resume", "storage saved");
         outState.putParcelable(NOTES_BUNDLE_VALUE, storage);
     }
 }
